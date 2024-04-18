@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { TipoModule } from './tipo/tipo.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { join } from 'path';
     database: 'cerveceria',
     entities: [__dirname + "/entity/*{.js,.ts}"], //__dirname + "/entity/*{.js,.ts}"
     synchronize: false,
-  })],
+  }),
+    TipoModule],
   controllers: [AppController],
   providers: [AppService],
 })
