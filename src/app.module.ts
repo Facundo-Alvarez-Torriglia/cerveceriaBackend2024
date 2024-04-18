@@ -5,6 +5,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { TipoModule } from './tipo/tipo.module';
+import { CategoriaModule } from './categoria/categoria.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { TipoModule } from './tipo/tipo.module';
     entities: [__dirname + "/entity/*{.js,.ts}"], //__dirname + "/entity/*{.js,.ts}"
     synchronize: false,
   }),
-    TipoModule],
+    TipoModule,
+    CategoriaModule],
   controllers: [AppController],
   providers: [AppService],
 })
