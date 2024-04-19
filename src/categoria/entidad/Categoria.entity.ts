@@ -1,18 +1,14 @@
 import { Producto } from "src/producto/dto/DtoProducto.dto";
 import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('tipo')
-export class Tipo {
+@Entity('categoria')
+export class Categoria {
     @PrimaryGeneratedColumn()
-    idTipo: number;
+    idCategoria: number;
 
-    @Column({ length: 55})
+    @Column()
     nombre:string;
 
-    @ManyToOne(()=> Producto, producto => producto.tipo)
+    @ManyToOne(()=> Producto, producto => producto.categoria)
     productos:Producto [];
-
-    constructor( nombre:string ){
-        this.nombre= nombre;
-    }
 }
