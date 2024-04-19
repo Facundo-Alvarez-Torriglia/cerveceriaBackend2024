@@ -5,6 +5,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { TipoModule } from './tipo/tipo.module';
+import { UsuarioModule } from './usuario/usuario.module';
+import { SucursalModule } from './sucursal/sucursal.module';
+import { RolModule } from './rol/rol.module';
+import { ProductoModule } from './producto/producto.module';
+import { CategoriaModule } from './categoria/categoria.module';
 
 @Module({
   imports: [
@@ -16,10 +21,16 @@ import { TipoModule } from './tipo/tipo.module';
     username: 'root',
     password: 'root',
     database: 'cerveceria',
-    entities: [Sucursal,Rol,Usuario], //__dirname + "/entity/*{.js,.ts}"
+    entities: [__dirname + "/entity/*{.js,.ts}"], //__dirname + "/entity/*{.js,.ts}"
     synchronize: true,
   }),
-    TipoModule],
+    CategoriaModule,
+    ProductoModule,
+    RolModule,
+    SucursalModule,
+    TipoModule,
+    UsuarioModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
