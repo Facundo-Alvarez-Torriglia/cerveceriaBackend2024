@@ -1,8 +1,8 @@
 import { IsNumber, IsString } from "class-validator";
-import { Categoria } from "src/categoria/dto/DtoCategoria.dto";
+import { Categoria } from "src/categoria/entidad/Categoria.entity";
 import { Tipo } from "src/tipo/entidad/Tipo.entity";
 
-export class Producto {
+export class DtoProducto {
     @IsString()
     titulo:string;
     @IsString()

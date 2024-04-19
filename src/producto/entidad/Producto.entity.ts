@@ -14,9 +14,9 @@ export class Producto {
     descripcion:string;
     @Column()
     ingredientes:string;
-    @Column( {length:20} )
+    @Column()
     price:number;
-    @Column({ length:2} )
+    @Column()
     valoracion:number;
 
     @OneToMany(()=> Categoria, categoria => categoria.productos)
