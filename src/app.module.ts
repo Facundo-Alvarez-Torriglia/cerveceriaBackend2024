@@ -10,6 +10,12 @@ import { SucursalModule } from './sucursal/sucursal.module';
 import { RolModule } from './rol/rol.module';
 import { ProductoModule } from './producto/producto.module';
 import { CategoriaModule } from './categoria/categoria.module';
+import { Categoria } from './categoria/entidad/Categoria.entity';
+import { Producto } from './producto/entidad/Producto.entity';
+import { Rol } from './rol/entities/rol.entity';
+import { Sucursal } from './sucursal/entities/sucursal.entity';
+import { Tipo } from './tipo/entidad/Tipo.entity';
+import { Usuario } from './usuario/entities/usuario.entity';
 
 @Module({
   imports: [
@@ -21,7 +27,7 @@ import { CategoriaModule } from './categoria/categoria.module';
     username: 'root',
     password: 'root',
     database: 'cerveceria',
-    entities: [__dirname + "/entity/*{.js,.ts}"], //__dirname + "/entity/*{.js,.ts}"
+    entities: [Categoria, Producto, Rol, Sucursal, Tipo, Usuario], //__dirname + "/entity/*{.js,.ts}"
     synchronize: true,
   }),
     CategoriaModule,
