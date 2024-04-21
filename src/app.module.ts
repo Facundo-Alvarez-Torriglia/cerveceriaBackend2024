@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Res } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -10,6 +10,8 @@ import { SucursalModule } from './sucursal/sucursal.module';
 import { RolModule } from './rol/rol.module';
 import { ProductoModule } from './producto/producto.module';
 import { CategoriaModule } from './categoria/categoria.module';
+import { ReservaModule } from './reservas/reserva.module';
+import { MetodoPagoModule } from './metodoPago/metodoPago.module';
 import { Categoria } from './categoria/entidad/Categoria.entity';
 import { Producto } from './producto/entidad/Producto.entity';
 import { Rol } from './rol/entities/rol.entity';
@@ -37,7 +39,9 @@ import { MetodoPago } from './metodoPago/entities/MetodoPago.entity';
     RolModule,
     SucursalModule,
     TipoModule,
-    UsuarioModule
+    UsuarioModule,
+    ReservaModule,
+    MetodoPagoModule
   ],
   controllers: [AppController],
   providers: [AppService],

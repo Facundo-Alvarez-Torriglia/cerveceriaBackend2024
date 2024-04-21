@@ -11,4 +11,4 @@ import { MetodoPago } from 'src/metodoPago/entities/MetodoPago.entity';
   controllers: [ReservaController],
   providers: [ReservaService],  
 })
-export class ProductoModule {}
+export class ReservaModule {}
