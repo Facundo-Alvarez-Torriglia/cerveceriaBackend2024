@@ -3,16 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from './entidad/Producto.entity';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { DtoProducto } from './dto/DtoProducto.dto';
-import { Categoria } from 'src/categoria/entidad/Categoria.entity';
-import { CategoriaService } from 'src/categoria/categoria.service';
-import { TipoService } from 'src/tipo/tipo.service';
-import { Tipo } from 'src/tipo/entidad/Tipo.entity';
 
 @Injectable()
 export class ProductoService {
-    constructor(@InjectRepository(Producto) private readonly productoRepository: Repository <Producto>,
-                @Inject(CategoriaService) private readonly categoriaService: CategoriaService,
-                @Inject(TipoService) private readonly tipoService: TipoService) {}
+    constructor(@InjectRepository(Producto) private readonly productoRepository: Repository <Producto>) {}
 
     async getProductos(): Promise <Producto[]> {
         try {
