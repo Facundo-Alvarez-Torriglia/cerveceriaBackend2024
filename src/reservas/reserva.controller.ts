@@ -1,77 +1,77 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
-import { TipoService } from './tipo.service';
-import { Tipo } from './entidad/Tipo.entity';
-import { DtoTipo } from './dto/DtoTipo.dto';
+import { ReservaDto } from './dto/create-reserva.dto';
+import { ReservaService } from './reserva.service';
+import { Reserva } from './entities/Reserva.entity';
 
-@Controller('tipo')
-export class TipoController {
-    constructor(private readonly tipoService: TipoService) {}
+@Controller('reserva')
+export class ReservaController {
+    constructor(private readonly reservaService: ReservaService) {}
 
     @Get()
     @HttpCode(200)
-    async getTipos(): Promise<Tipo[]> {
+    async getReservas(): Promise<Reserva[]> {
         try {
-            return await this.tipoService.getTipos();
+            return await this.reservaService.getReservas();
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener los tipos: ' + error.message,
+                error: 'Error al obtener las reservas: ' + error.message,
             }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Get(':id')
     @HttpCode(200)
-    async getTipoById(@Param('id', new ParseIntPipe({
+    async getReservaById(@Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
-        })) id: number): Promise<Tipo> {
+        })) id: number): Promise<Reserva> {
         try {
-            return await this.tipoService.getTipoById(id);
+            return await this.reservaService.getReservaById(id);
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener el tipo: ' + error.message,
+                error: 'Error al obtener la reserva: ' + error.message,
             }, HttpStatus.INTERNAL_SERVER_ERROR);
         }  
     }
 
     @Post()
     @HttpCode(201)
-    async crearTipo(@Body() datos: DtoTipo): Promise<Tipo> {
+    async crearProducto(@Body() datos: ReservaDto): Promise<Reserva> {
         try {
-            return await this.tipoService.crearTipo(datos);
+            return await this.reservaService.crearReserva(datos);
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al crear el tipo: ' + error.message,
+                error: 'Error al crear la reserva: ' + error.message,
             }, HttpStatus.INTERNAL_SERVER_ERROR);
         }  
     }
 
     @Put(':id')
-    async actualizarTipo(@Param('id', new ParseIntPipe({
+    async actualizarReserva(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
-    })) id: number, @Body() datos: DtoTipo): Promise<Tipo> {
+    })) id: number, @Body() datos: ReservaDto): Promise<Reserva> {
         try {
-            return await this.tipoService.actualizarTipo(id, datos);
+            return await this.reservaService.actualizarReserva(id, datos);
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al actualizar el tipo: ' + error.message,
+                error: 'Error al actualizar la reserva: ' + error.message,
             }, HttpStatus.INTERNAL_SERVER_ERROR);
         } 
     }
 
     @Delete(':id')
-    async eliminarTipo(@Param('id', new ParseIntPipe({
+    async eliminarReserva(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
         try {
-            return await this.tipoService.eliminarTipo(id);
+            return await this.reservaService.eliminarReserva(id);
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al eliminar el tipo: ' + error.message,
+                error: 'Error al eliminar la reserva: ' + error.message,
             }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

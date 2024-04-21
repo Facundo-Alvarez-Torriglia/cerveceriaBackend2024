@@ -1,5 +1,5 @@
-import { Producto } from "src/producto/dto/DtoProducto.dto";
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Producto } from "src/producto/entidad/Producto.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('categoria')
 export class Categoria {
@@ -9,6 +9,10 @@ export class Categoria {
     @Column()
     nombre:string;
 
-    @ManyToOne(()=> Producto, producto => producto.categoria)
+    @OneToMany(()=> Producto, producto => producto.categoria)
     productos:Producto [];
+
+    constructor(nombre:string){
+        this.nombre=nombre;
+    }
 }

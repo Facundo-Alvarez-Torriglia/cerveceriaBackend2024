@@ -1,13 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, Res } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { TipoModule } from './tipo/tipo.module';
-import { Sucursal } from './sucursal/entities/sucursal.entity';
-import { Rol } from './rol/entities/rol.entity';
-import { Usuario } from './usuario/entities/usuario.entity';
 
 @Module({
   imports: [
@@ -19,10 +16,18 @@ import { Usuario } from './usuario/entities/usuario.entity';
     username: 'root',
     password: 'root',
     database: 'cerveceria',
-    entities: [__dirname + "/entity/*{.js,.ts}"], //__dirname + "/entity/*{.js,.ts}"
+    entities: [Sucursal,Rol,Usuario], //__dirname + "/entity/*{.js,.ts}"
     synchronize: true,
   }),
-    TipoModule],
+    CategoriaModule,
+    ProductoModule,
+    RolModule,
+    SucursalModule,
+    TipoModule,
+    UsuarioModule,
+    ReservaModule,
+    MetodoPagoModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
