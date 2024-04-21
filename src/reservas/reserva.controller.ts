@@ -37,7 +37,7 @@ export class ReservaController {
 
     @Post()
     @HttpCode(201)
-    async crearProducto(@Body() datos: ReservaDto): Promise<Reserva> {
+    async crearReserva(@Body() datos: ReservaDto): Promise<Reserva> {
         try {
             return await this.reservaService.crearReserva(datos);
         } catch (error) {
