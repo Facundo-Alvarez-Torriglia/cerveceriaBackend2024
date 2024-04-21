@@ -16,6 +16,8 @@ import { Rol } from './rol/entities/rol.entity';
 import { Sucursal } from './sucursal/entities/sucursal.entity';
 import { Tipo } from './tipo/entidad/Tipo.entity';
 import { Usuario } from './usuario/entities/usuario.entity';
+import { Reserva } from './reservas/entities/Reserva.entity';
+import { MetodoPago } from './metodoPago/entities/MetodoPago.entity';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { Usuario } from './usuario/entities/usuario.entity';
     username: 'root',
     password: 'root',
     database: 'cerveceria',
-    entities: [Categoria, Producto, Rol, Sucursal, Tipo, Usuario], //__dirname + "/entity/*{.js,.ts}"
+    entities: [Categoria, Producto, Rol, Sucursal, Tipo, Usuario, Reserva, MetodoPago], //__dirname + "/entity/*{.js,.ts}"
     synchronize: true,
   }),
     CategoriaModule,
