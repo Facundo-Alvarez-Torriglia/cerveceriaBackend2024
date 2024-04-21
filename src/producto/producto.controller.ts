@@ -48,7 +48,7 @@ export class ProductoController {
         }  
     }
 
-    @Put(':id')
+  @Put(':id')
     async actualizarProducto(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: DtoProducto): Promise<Producto> {

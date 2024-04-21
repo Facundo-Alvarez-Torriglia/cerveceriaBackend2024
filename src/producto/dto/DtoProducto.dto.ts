@@ -1,4 +1,6 @@
 import { IsNumber, IsString } from "class-validator";
+import { Categoria } from "src/categoria/entidad/Categoria.entity";
+import { Tipo } from "src/tipo/entidad/Tipo.entity";
 
 export class DtoProducto {
     @IsString()
@@ -13,8 +15,6 @@ export class DtoProducto {
     price:number;
     @IsNumber()
     valoracion:number;
-    @IsNumber()
-    categoria:number;
-    @IsNumber()
-    tipo:number;
+    categoria:Categoria;
+    tipo:Tipo;
 }
