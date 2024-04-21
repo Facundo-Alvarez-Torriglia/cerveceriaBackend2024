@@ -1,5 +1,5 @@
 import { Producto } from "src/producto/entidad/Producto.entity";
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('tipo')
 export class Tipo {
@@ -9,7 +9,7 @@ export class Tipo {
     @Column({ length: 55})
     nombre:string;
 
-    @ManyToOne(()=> Producto, producto => producto.tipo)
+    @OneToMany(()=> Producto, producto => producto.tipo)
     productos:Producto [];
 
     constructor( nombre:string ){

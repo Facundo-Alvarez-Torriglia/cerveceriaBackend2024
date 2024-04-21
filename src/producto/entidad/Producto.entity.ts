@@ -1,6 +1,6 @@
 import { Categoria } from "src/categoria/entidad/Categoria.entity";
 import { Tipo } from "src/tipo/entidad/Tipo.entity";
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('producto')
 export class Producto {
@@ -19,11 +19,11 @@ export class Producto {
     @Column()
     valoracion:number;
 
-    @OneToMany(()=> Categoria, categoria => categoria.productos)
+    @ManyToOne(()=> Categoria, categoria => categoria.productos)
     @JoinColumn({name: "idCategoria"})
     categoria:Categoria;
 
-    @OneToMany(()=>Tipo, tipo => tipo.productos)
+    @ManyToOne(()=>Tipo, tipo => tipo.productos)
     @JoinColumn({ name: "idTipo" })
     tipo:Tipo;
 

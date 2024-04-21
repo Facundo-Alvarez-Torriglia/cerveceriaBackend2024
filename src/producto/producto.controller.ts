@@ -38,7 +38,7 @@ export class ProductoController {
     @Post()
     @HttpCode(201)
     async crearProducto(@Body() datos: DtoProducto): Promise<Producto> {
-        try {
+        try {           
             return await this.productoService.crearProducto(datos);
         } catch (error) {
             throw new HttpException({
