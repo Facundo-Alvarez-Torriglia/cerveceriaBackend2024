@@ -5,25 +5,24 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { TipoModule } from './tipo/tipo.module';
-import { UsuarioModule } from './usuario/usuario.module';
-import { SucursalModule } from './sucursal/sucursal.module';
-import { RolModule } from './rol/rol.module';
-import { ProductoModule } from './producto/producto.module';
-import { CategoriaModule } from './categoria/categoria.module';
-import { ReservaModule } from './reservas/reserva.module';
-import { MetodoPagoModule } from './metodoPago/metodoPago.module';
-import { Categoria } from './categoria/entidad/Categoria.entity';
-import { Producto } from './producto/entidad/Producto.entity';
-import { Rol } from './rol/entities/rol.entity';
 import { Sucursal } from './sucursal/entities/sucursal.entity';
-import { Tipo } from './tipo/entidad/Tipo.entity';
+import { Rol } from './rol/entities/rol.entity';
 import { Usuario } from './usuario/entities/usuario.entity';
+import { CategoriaModule } from './categoria/categoria.module';
+import { ProductoModule } from './producto/producto.module';
+import { RolModule } from './rol/rol.module';
+import { SucursalModule } from './sucursal/sucursal.module';
+import { UsuarioModule } from './usuario/usuario.module';
+import { MetodoPagoModule } from './metodoPago/metodoPago.module';
+import { ReservaModule } from './reservas/reserva.module';
+import { Tipo } from './tipo/entidad/Tipo.entity';
 import { Reserva } from './reservas/entities/Reserva.entity';
+import { Producto } from './producto/entidad/Producto.entity';
 import { MetodoPago } from './metodoPago/entities/MetodoPago.entity';
-import { PedidoProductoModule } from './pedido-producto/pedido-producto.module';
-import { PedidoModule } from './pedido/pedido.module';
-import { Pedido } from './pedido/entity/pedido.entity';
-import { PedidoProducto } from './pedido-producto/entity/pedido-producto';
+import { Categoria } from './categoria/entidad/Categoria.entity';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
+
 
 @Module({
   imports: [
@@ -35,7 +34,7 @@ import { PedidoProducto } from './pedido-producto/entity/pedido-producto';
     username: 'root',
     password: 'root',
     database: 'cerveceria',
-    entities: [Categoria, Producto, Rol, Sucursal, Tipo, Usuario, Reserva, MetodoPago, Pedido, PedidoProducto], //__dirname + "/entity/*{.js,.ts}"
+    entities: [Sucursal,Rol,Usuario,Tipo,Reserva,Producto,MetodoPago,Categoria], //__dirname + "/entity/*{.js,.ts}"
     synchronize: true,
   }),
     CategoriaModule,
@@ -46,8 +45,7 @@ import { PedidoProducto } from './pedido-producto/entity/pedido-producto';
     UsuarioModule,
     ReservaModule,
     MetodoPagoModule,
-    PedidoModule,
-    PedidoProductoModule 
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

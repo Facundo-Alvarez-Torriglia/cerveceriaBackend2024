@@ -1,4 +1,6 @@
 import { Reserva } from "src/reservas/entities/Reserva.entity";
+import { Role } from "src/rol/rol.enum";
+
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('usuario')
@@ -7,32 +9,34 @@ export class Usuario {
     id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @Column()
-    lastname: string
+    lastname: string;
 
     @Column()
-    username: string
+    username: string;
 
     @Column()
-    email: string
+    age: number;
 
     @Column()
-    password: string
+    direccion: string;
 
     @Column()
-    age: number
+    email: string;
 
     @Column()
-    direccion: string
+    password: string;
+
+    @Column({ type: 'enum', enum: Role, default: Role.User })
+    role: string;
 
     @ManyToOne(() => Reserva, reserva => reserva.usuario)
     @JoinColumn({ name: "idReserva" })
     reservas: Reserva;
 
-    constructor(id: number, name: string, lastname: string, username: string, email: string, password: string, age: number, direccion: string) {
-        this.id = id;
+    constructor(name: string, lastname: string, username: string, email: string, password: string, age: number, direccion: string, role: Role) {
         this.name = name;
         this.lastname = lastname;
         this.username = username;
@@ -40,5 +44,6 @@ export class Usuario {
         this.password = password;
         this.age = age;
         this.direccion = direccion;
+        this.role = role;
     }
 }
