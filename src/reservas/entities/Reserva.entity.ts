@@ -20,7 +20,8 @@ export class Reserva {
     @Column()
     numeroMesa: number
 
-    @OneToMany(() => Usuario, usuario => usuario.reservas)
+    @ManyToOne(() => Usuario, usuario => usuario.reservas)
+    @JoinColumn({ name: "idUsuario" })
     usuario: Usuario;
 
     @ManyToOne(() => MetodoPago, metodoPago => metodoPago.reservas)
