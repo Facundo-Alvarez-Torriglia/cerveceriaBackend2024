@@ -10,6 +10,6 @@ export class Pedido {
     @Column({ type: Date, nullable: false })
     fecha: Date;
 
-    @Column({ type: Number, nullable: false, default: 0 })
-    detalle: number;
+    @Column({ type: String, nullable: false })
+    detalle: string;
 }
