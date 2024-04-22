@@ -38,7 +38,7 @@ export class UsuarioService {
     }
   }
 
-  public async findAllUser() {
+  public async findAllUser():Promise<Usuario[]> {
     try {
       let criterio: FindManyOptions = { relations: [] };
       const user = await this.usuarioRepository.find(criterio);

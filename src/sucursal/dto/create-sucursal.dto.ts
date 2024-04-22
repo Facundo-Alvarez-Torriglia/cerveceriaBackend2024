@@ -6,7 +6,7 @@ export class SucursalDto {
 nombre:string;
 
 @IsString()
-direccion:number;
+direccion:string;
 
 @IsString()
 telefono:string;
