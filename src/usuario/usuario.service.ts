@@ -3,30 +3,31 @@ import { UsuarioDto } from './dto/create-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { Role } from 'src/rol/rol.enum';
+
 
 @Injectable()
 export class UsuarioService {
   constructor(@InjectRepository(Usuario) private readonly usuarioRepository: Repository<Usuario>) { }
 
-
-  private async usuarioExistente(datos: UsuarioDto): Promise<void> {
-    if (!datos.name || !datos.lastname || !datos.age || !datos.username || !datos.email || !datos.password) {
-      throw new BadRequestException(`No puede tener campos vacíos`);
-    }
-    const existente: Usuario = await this.usuarioRepository.findOne({ where: { email: datos.email } });
-    if (existente) {
-      throw new ConflictException(`Usuario existente en la base de datos`);
-    }
-  }
   public async create(userData: UsuarioDto): Promise<Usuario> {
+    if (userData.role && ![Role.User, Role.Admin].includes(userData.role)){
+      throw new HttpException(`El rol proporcionado no es válido`, HttpStatus.BAD_REQUEST)
+    }
+    
     const existingUser = await this.usuarioRepository.findOne({ where: { email: userData.email } });
     if (existingUser) {
       throw new HttpException('El correo electrónico proporcionado ya está en uso', HttpStatus.CONFLICT);
     }
-   try {
+    try {
       let user: Usuario;
       if (userData.email && userData.password && userData.name && userData.lastname) {
-        user = new Usuario(userData.name, userData.lastname, userData.username, userData.email, userData.password, userData.age, userData.direccion);
+        user = new Usuario(userData.name, userData.lastname, userData.username, userData.email, userData.password, userData.age, userData.direccion, userData.role);
+        if(userData.role){
+          user.role = userData.role;
+        } else {
+          user.role = Role.User
+        }
         user = await this.usuarioRepository.save(user);
         return user;
       } else {
@@ -36,7 +37,6 @@ export class UsuarioService {
       throw new HttpException('Error en la creación del usuario', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
 
   public async findAllUser() {
     try {
@@ -50,23 +50,22 @@ export class UsuarioService {
         error: 'Se produjo un error al intentar obtener los datos. Comprueba la ruta de busqueda e intente nuevamente' + error
       }, HttpStatus.NOT_FOUND);
     }
-
   }
+
+  
+
   public async findOneUser(email:string): Promise<Usuario> {
     try {
-
       let criterio: FindOneOptions = { relations: [], where: { email: email } };
       const user = await this.usuarioRepository.findOne(criterio);
       if (user) return user;
-      throw new NotFoundException(`Es usuario al cual hace referencia el id ${email} no se encuentra 
-      en la base de datos. Verifique los campos ingresados e intente nuevamente`);
+      throw new NotFoundException(`Es usuario al cual hace referencia el id ${email} no se encuentra en la base de datos. Verifique los campos ingresados e intente nuevamente`);
     } catch (error) {
-      throw new HttpException({ status: HttpStatus.NOT_FOUND, error: `Se produjo un error al
-       intentar obtener el usuario con id ${email}. Compruebe los datos ingresados e intente nuevamente` },
+      throw new HttpException({ status: HttpStatus.NOT_FOUND, error: `Se produjo un error al intentar obtener el usuario con id ${email}. Compruebe los datos ingresados e intente nuevamente` },
         HttpStatus.NOT_FOUND);
     }
-
   }
+
   async findOne(id: number): Promise<Usuario> {
     try {
       let criterio: FindOneOptions = { relations: [], where: { id: id } };
@@ -77,7 +76,6 @@ export class UsuarioService {
       throw new HttpException({ status: HttpStatus.NOT_FOUND, error: `Se produjo un error al intentar obtener el usuario con id ${id}. Compruebe los datos ingresados e intente nuevamente` },
         HttpStatus.NOT_FOUND);
     }
-
   }
 
   async update(id: number, datos: UsuarioDto) : Promise<Usuario>{
@@ -102,13 +100,12 @@ export class UsuarioService {
     
   }
 
-  async remove(id: number) : Promise<string>{
+  public async remove(id: number) : Promise<string>{
     try{
       const removeUser : Usuario = await this.findOne(id);
       if(removeUser){
         await this.usuarioRepository.remove(removeUser);
-        return `El usuario con id:${id} ha sido eliminado
-        correctamente de la base de datos`;
+        return `El usuario ${removeUser.name} ${removeUser.lastname} con id:${id} ha sido eliminado correctamente de la base de datos`;
       }
     } catch (error) {
       throw new HttpException({ status: HttpStatus.NOT_FOUND,

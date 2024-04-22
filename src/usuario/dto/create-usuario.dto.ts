@@ -1,28 +1,29 @@
 import { IsEmail, IsNumber, IsString } from "class-validator";
+import { Role } from "src/rol/rol.enum";
+
 
 export class UsuarioDto {
     @IsString()
-    name:string;
+    name: string;
 
     @IsString()
-    lastname:string;
+    lastname: string;
     
     @IsString()
-    username:string;
+    username: string;
     
     @IsNumber()
-    age:number
+    age: number;
 
     @IsString()
-    direccion:string;
-    
+    direccion: string;
     
     @IsEmail()
-    email:string;
+    email: string;
 
     @IsString()
-    password:string;
+    password: string;
 
-    
-
+    @IsString()
+    role: Role;
 }

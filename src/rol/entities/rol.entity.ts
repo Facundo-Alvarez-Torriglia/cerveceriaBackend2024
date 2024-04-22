@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Role } from "../Rol enum/role decorador/rol.enum";
+import { Role } from "../rol.enum";
 
 @Entity('rol')
 export class Rol {
@@ -7,5 +7,5 @@ export class Rol {
 id:number
 
 @Column()
-role:string
+role:Role
 }

@@ -1,7 +1,7 @@
 import { IsString } from "class-validator";
-import { Role } from "../Rol enum/role decorador/rol.enum";
+import { Role } from "../rol.enum";
 
 export class RolDto {
     @IsString()
-    role:Role[]
+    role:Role
 }

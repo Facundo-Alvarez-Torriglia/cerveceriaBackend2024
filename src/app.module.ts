@@ -20,6 +20,9 @@ import { Reserva } from './reservas/entities/Reserva.entity';
 import { Producto } from './producto/entidad/Producto.entity';
 import { MetodoPago } from './metodoPago/entities/MetodoPago.entity';
 import { Categoria } from './categoria/entidad/Categoria.entity';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
+
 
 @Module({
   imports: [
@@ -41,7 +44,8 @@ import { Categoria } from './categoria/entidad/Categoria.entity';
     TipoModule,
     UsuarioModule,
     ReservaModule,
-    MetodoPagoModule
+    MetodoPagoModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
