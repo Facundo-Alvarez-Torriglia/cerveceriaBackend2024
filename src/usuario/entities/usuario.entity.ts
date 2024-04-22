@@ -16,23 +16,24 @@ export class Usuario {
     username: string
 
     @Column()
-    email: string
-
-    @Column()
-    password: string
-
-    @Column()
     age: number
 
     @Column()
     direccion: string
 
+    @Column()
+    email: string
+
+    @Column()
+    password: string
+
+
     @ManyToOne(() => Reserva, reserva => reserva.usuario)
     @JoinColumn({ name: "idReserva" })
     reservas: Reserva;
 
-    constructor(id: number, name: string, lastname: string, username: string, email: string, password: string, age: number, direccion: string) {
-        this.id = id;
+    constructor( name: string, lastname: string, username: string, email: string, password: string, age: number, direccion: string) {
+        
         this.name = name;
         this.lastname = lastname;
         this.username = username;

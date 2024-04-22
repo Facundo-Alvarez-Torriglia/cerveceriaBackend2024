@@ -6,20 +6,23 @@ export class UsuarioDto {
 
     @IsString()
     lastname:string;
-
+    
     @IsString()
     username:string;
+    
+    @IsNumber()
+    age:number
 
+    @IsString()
+    direccion:string;
+    
+    
     @IsEmail()
     email:string;
 
     @IsString()
     password:string;
 
-    @IsNumber()
-    age:number
     
-    @IsString()
-    direccion:string;
 
 }

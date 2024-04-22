@@ -5,6 +5,21 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { TipoModule } from './tipo/tipo.module';
+import { Sucursal } from './sucursal/entities/sucursal.entity';
+import { Rol } from './rol/entities/rol.entity';
+import { Usuario } from './usuario/entities/usuario.entity';
+import { CategoriaModule } from './categoria/categoria.module';
+import { ProductoModule } from './producto/producto.module';
+import { RolModule } from './rol/rol.module';
+import { SucursalModule } from './sucursal/sucursal.module';
+import { UsuarioModule } from './usuario/usuario.module';
+import { MetodoPagoModule } from './metodoPago/metodoPago.module';
+import { ReservaModule } from './reservas/reserva.module';
+import { Tipo } from './tipo/entidad/Tipo.entity';
+import { Reserva } from './reservas/entities/Reserva.entity';
+import { Producto } from './producto/entidad/Producto.entity';
+import { MetodoPago } from './metodoPago/entities/MetodoPago.entity';
+import { Categoria } from './categoria/entidad/Categoria.entity';
 
 @Module({
   imports: [
@@ -16,7 +31,7 @@ import { TipoModule } from './tipo/tipo.module';
     username: 'root',
     password: 'root',
     database: 'cerveceria',
-    entities: [Sucursal,Rol,Usuario], //__dirname + "/entity/*{.js,.ts}"
+    entities: [Sucursal,Rol,Usuario,Tipo,Reserva,Producto,MetodoPago,Categoria], //__dirname + "/entity/*{.js,.ts}"
     synchronize: true,
   }),
     CategoriaModule,
