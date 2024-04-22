@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository, FindOneOptions } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 
 @Injectable()
@@ -91,7 +91,5 @@ export class PedidoService {
 
 
 
-function InjectRepository(Pedido: any): (target: typeof PedidoService, propertyKey: undefined, parameterIndex: 0) => void {
-    throw new Error('Function not implemented.');
-}
+
 
