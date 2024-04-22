@@ -17,8 +17,8 @@ telefono:string
 @Column()
 imagen:string
 
-constructor(id:number,nombre: string,direccion:string,telefono:string, imagen:string){
-this.id = id;
+constructor(nombre: string,direccion:string,telefono:string, imagen:string){
+
 this.nombre = nombre;
 this.dirección = direccion;
 this.telefono =telefono;
