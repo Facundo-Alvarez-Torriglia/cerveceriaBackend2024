@@ -20,6 +20,10 @@ import { Tipo } from './tipo/entidad/Tipo.entity';
 import { Usuario } from './usuario/entities/usuario.entity';
 import { Reserva } from './reservas/entities/Reserva.entity';
 import { MetodoPago } from './metodoPago/entities/MetodoPago.entity';
+import { PedidoProductoModule } from './pedido-producto/pedido-producto.module';
+import { PedidoModule } from './pedido/pedido.module';
+import { Pedido } from './pedido/entity/pedido.entity';
+import { PedidoProducto } from './pedido-producto/entity/pedido-producto';
 
 @Module({
   imports: [
@@ -31,7 +35,7 @@ import { MetodoPago } from './metodoPago/entities/MetodoPago.entity';
     username: 'root',
     password: 'root',
     database: 'cerveceria',
-    entities: [Categoria, Producto, Rol, Sucursal, Tipo, Usuario, Reserva, MetodoPago], //__dirname + "/entity/*{.js,.ts}"
+    entities: [Categoria, Producto, Rol, Sucursal, Tipo, Usuario, Reserva, MetodoPago, Pedido, PedidoProducto], //__dirname + "/entity/*{.js,.ts}"
     synchronize: true,
   }),
     CategoriaModule,
@@ -41,7 +45,9 @@ import { MetodoPago } from './metodoPago/entities/MetodoPago.entity';
     TipoModule,
     UsuarioModule,
     ReservaModule,
-    MetodoPagoModule
+    MetodoPagoModule,
+    PedidoModule,
+    PedidoProductoModule 
   ],
   controllers: [AppController],
   providers: [AppService],
