@@ -1,6 +1,6 @@
 import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-export class pedidoDto {
+export class PedidoDto {
 
     @IsNumber()
     @IsNotEmpty()
