@@ -1,4 +1,6 @@
 import { IsEmail, IsNumber, IsString } from "class-validator";
+import { Pedido } from "src/pedido/entity/pedido.entity";
+import { Reserva } from "src/reservas/entities/Reserva.entity";
 import { Role } from "src/rol/rol.enum";
 
 
@@ -26,4 +28,5 @@ export class UsuarioDto {
 
     @IsString()
     role: Role;
+
 }

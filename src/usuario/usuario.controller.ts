@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, H
 import { UsuarioService } from './usuario.service';
 import { UsuarioDto } from './dto/create-usuario.dto';
 
-import { RolDto } from 'src/rol/dto/create-rol.dto';
 import { Usuario } from './entities/usuario.entity';
 
 @Controller('usuario')

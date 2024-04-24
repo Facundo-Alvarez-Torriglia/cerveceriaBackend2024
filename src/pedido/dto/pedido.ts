@@ -1,10 +1,7 @@
 import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { Usuario } from "src/usuario/entities/usuario.entity";
 
 export class PedidoDto {
-
-    @IsNumber()
-    @IsNotEmpty()
-    id: number;
 
     @IsDate()
     @IsNotEmpty()
@@ -13,4 +10,7 @@ export class PedidoDto {
     @IsString()
     @IsNotEmpty()
     detalle: string;
+
+    @IsNotEmpty()
+    usuario:Usuario;
 }

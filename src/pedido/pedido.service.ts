@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository, FindOneOptions } from 'typeorm';
+import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,6 +11,7 @@ export class PedidoService {
 
     async getPedidos(): Promise<Pedido[]> {
         try {
+            const criterio:FindManyOptions = {relations: ['usuario']}
             const pedidos: Pedido[] = await this.pedidoRepository.find();
             if (pedidos.length > 0) return pedidos;
             throw new NotFoundException(`No hay pedidos registrados en la base de datos`);
@@ -24,7 +25,7 @@ export class PedidoService {
 
     async getPedidoById(id: number): Promise<Pedido> {
         try {
-            const criterio: FindOneOptions = { where: { id: id } };
+            const criterio: FindOneOptions = { relations: ['usuario'],where: { id: id } };
             const pedido: Pedido = await this.pedidoRepository.findOne(criterio);
             if (pedido) return pedido;
             throw new NotFoundException(`No se encontró un pedido con el id ${id}`);
