@@ -1,12 +1,13 @@
 import { IsNotEmpty, IsNumber } from "class-validator";
 
-export class pedidoDto {
+export class pedidoProductoDto {
 
     @IsNumber()
     @IsNotEmpty()
-    id: number;
+    id?: number;
 
     @IsNumber()
     @IsNotEmpty()
     cantidad: number;
+
 }

@@ -41,10 +41,10 @@ export class PedidoService {
         try {
             // Convertir PedidoDto a un objeto parcial de Pedido
             const nuevoPedido: Partial<Pedido> = datos;
+
             // Crear el pedido en la base de datos
-            const pedidoGuardado: Pedido = await this.pedidoRepository.save(
-                nuevoPedido,
-            );
+            const pedidoGuardado: Pedido = await this.pedidoRepository.save(nuevoPedido);
+
             // Devolver el pedido guardado
             return pedidoGuardado;
         } catch (error) {
