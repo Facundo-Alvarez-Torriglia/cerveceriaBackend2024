@@ -1,26 +1,14 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-export class pedidoDto {
+export class PedidoDto {
 
     @IsNumber()
     @IsNotEmpty()
     id: number;
 
-    @IsNumber()
-    @IsNotEmpty()
-    idProducto: number;
-
-    @IsNumber()
-    @IsNotEmpty()
-    idUsuario: number;
-
     @IsDate()
     @IsNotEmpty()
     fecha: Date;
-
-    @IsNumber()
-    @IsNotEmpty()
-    idMetodo: number;
 
     @IsString()
     @IsNotEmpty()
