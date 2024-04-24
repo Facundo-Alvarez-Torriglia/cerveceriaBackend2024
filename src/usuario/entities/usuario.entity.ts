@@ -38,7 +38,6 @@ export class Usuario {
     reservas: Reserva[];
 
     @OneToMany(()=> Pedido, pedido=> pedido.usuario )
-    @JoinColumn( {name: "idPedidos"})
     pedidos: Pedido[];
     
 
