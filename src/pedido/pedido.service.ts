@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository, FindOneOptions } from 'typeorm';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
@@ -38,15 +38,24 @@ export class PedidoService {
 
     async crearPedido(datos: PedidoDto): Promise<Pedido> {
         try {
+            // Comprobar si ya existe un pedido con el ID proporcionado
+            const pedidoExistente: Pedido = await this.pedidoRepository.findOne({ where: { id: datos.id } });
+            if (pedidoExistente) {
+                throw new ConflictException(`Ya existe un pedido con el ID ${datos.id}`);
+            }
+
             // Convertir PedidoDto a un objeto parcial de Pedido
             const nuevoPedido: Partial<Pedido> = datos;
+
             // Crear el pedido en la base de datos
-            const pedidoGuardado: Pedido = await this.pedidoRepository.save(
-                nuevoPedido,
-            );
+            const pedidoGuardado: Pedido = await this.pedidoRepository.save(nuevoPedido);
+
             // Devolver el pedido guardado
             return pedidoGuardado;
         } catch (error) {
+            if (error instanceof ConflictException) {
+                throw error;
+            }
             throw new HttpException(
                 {
                     status: HttpStatus.INTERNAL_SERVER_ERROR,
