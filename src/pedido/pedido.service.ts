@@ -1,5 +1,5 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository, FindOneOptions } from 'typeorm';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,6 +11,7 @@ export class PedidoService {
 
     async getPedidos(): Promise<Pedido[]> {
         try {
+            const criterio:FindManyOptions = {relations: ['usuario']}
             const pedidos: Pedido[] = await this.pedidoRepository.find();
             if (pedidos.length > 0) return pedidos;
             throw new NotFoundException(`No hay pedidos registrados en la base de datos`);
@@ -24,7 +25,7 @@ export class PedidoService {
 
     async getPedidoById(id: number): Promise<Pedido> {
         try {
-            const criterio: FindOneOptions = { where: { id: id } };
+            const criterio: FindOneOptions = { relations: ['usuario'],where: { id: id } };
             const pedido: Pedido = await this.pedidoRepository.findOne(criterio);
             if (pedido) return pedido;
             throw new NotFoundException(`No se encontró un pedido con el id ${id}`);
@@ -38,12 +39,6 @@ export class PedidoService {
 
     async crearPedido(datos: PedidoDto): Promise<Pedido> {
         try {
-            // Comprobar si ya existe un pedido con el ID proporcionado
-            const pedidoExistente: Pedido = await this.pedidoRepository.findOne({ where: { id: datos.id } });
-            if (pedidoExistente) {
-                throw new ConflictException(`Ya existe un pedido con el ID ${datos.id}`);
-            }
-
             // Convertir PedidoDto a un objeto parcial de Pedido
             const nuevoPedido: Partial<Pedido> = datos;
 
@@ -53,9 +48,6 @@ export class PedidoService {
             // Devolver el pedido guardado
             return pedidoGuardado;
         } catch (error) {
-            if (error instanceof ConflictException) {
-                throw error;
-            }
             throw new HttpException(
                 {
                     status: HttpStatus.INTERNAL_SERVER_ERROR,

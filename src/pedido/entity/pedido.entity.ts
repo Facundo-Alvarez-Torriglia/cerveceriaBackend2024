@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn,  } from "typeorm";
+import { Usuario } from "src/usuario/entities/usuario.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,  } from "typeorm";
 
 
 @Entity()
@@ -12,4 +13,8 @@ export class Pedido {
 
     @Column({ type: String, nullable: false })
     detalle: string;
+
+    @ManyToOne(()=>Usuario, usuario => usuario.pedidos)
+    @JoinColumn({name: "idUsuario"})
+    usuario:Usuario;
 }

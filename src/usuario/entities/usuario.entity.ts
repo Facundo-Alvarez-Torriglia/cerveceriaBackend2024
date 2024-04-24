@@ -1,7 +1,8 @@
+import { Pedido } from "src/pedido/entity/pedido.entity";
 import { Reserva } from "src/reservas/entities/Reserva.entity";
 import { Role } from "src/rol/rol.enum";
 
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('usuario')
 export class Usuario {
@@ -32,9 +33,14 @@ export class Usuario {
     @Column({ type: 'enum', enum: Role, default: Role.User })
     role: string;
 
-    @ManyToOne(() => Reserva, reserva => reserva.usuario)
+    @OneToMany(() => Reserva, reserva => reserva.usuario)
     @JoinColumn({ name: "idReserva" })
-    reservas: Reserva;
+    reservas: Reserva[];
+
+    @OneToMany(()=> Pedido, pedido=> pedido.usuario )
+    @JoinColumn( {name: "idPedidos"})
+    pedidos: Pedido[];
+    
 
     constructor(name: string, lastname: string, username: string, email: string, password: string, age: number, direccion: string, role: Role) {
         this.name = name;

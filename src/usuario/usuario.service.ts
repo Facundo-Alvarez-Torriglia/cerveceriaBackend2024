@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UsuarioDto } from './dto/create-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
@@ -40,7 +40,7 @@ export class UsuarioService {
 
   public async findAllUser():Promise<Usuario[]> {
     try {
-      let criterio: FindManyOptions = { relations: [] };
+      let criterio: FindManyOptions = { relations: ['pedidos', 'reservas'] };
       const user = await this.usuarioRepository.find(criterio);
       if (user) return user;
       throw new Error('El fichero de usuario está vacio. Debe realizar primero una carga de datos')
@@ -56,7 +56,7 @@ export class UsuarioService {
 
   public async findOneUser(email:string): Promise<Usuario> {
     try {
-      let criterio: FindOneOptions = { relations: [], where: { email: email } };
+      let criterio: FindOneOptions = { relations: ['pedidos', 'reservas'], where: { email: email } };
       const user = await this.usuarioRepository.findOne(criterio);
       if (user) return user;
       throw new NotFoundException(`Es usuario al cual hace referencia el id ${email} no se encuentra en la base de datos. Verifique los campos ingresados e intente nuevamente`);
@@ -68,7 +68,7 @@ export class UsuarioService {
 
   async findOne(id: number): Promise<Usuario> {
     try {
-      let criterio: FindOneOptions = { relations: [], where: { id: id } };
+      let criterio: FindOneOptions = { relations: ['pedidos','reservas'], where: { id: id } };
       const user = await this.usuarioRepository.findOne(criterio);
       if (user) return user;
       throw new NotFoundException(`El usuario con id ${id} al cual hace referencia no existe en la base de datos`);
