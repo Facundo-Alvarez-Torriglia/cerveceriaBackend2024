@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 
 @Controller('pedido')
@@ -37,6 +38,7 @@ export class PedidoController {
     }
 
     @Post()
+    @UseGuards(AuthGuard)
     @HttpCode(201)
     async crearPedido(@Body() datos: PedidoDto): Promise<Pedido> {
         try {           
