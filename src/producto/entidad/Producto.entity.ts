@@ -1,6 +1,7 @@
 import { Categoria } from "src/categoria/entidad/Categoria.entity";
+import { PedidoProducto } from "src/pedido-producto/entity/pedido-producto";
 import { Tipo } from "src/tipo/entidad/Tipo.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('producto')
 export class Producto {
@@ -26,6 +27,9 @@ export class Producto {
     @ManyToOne(()=>Tipo, tipo => tipo.productos)
     @JoinColumn({ name: "idTipo" })
     tipo:Tipo;
+
+    @OneToMany(()=> PedidoProducto, pedProd=> pedProd.producto)
+    pedidoProductos: Producto[];
 
     constructor(titulo:string, img:string,descripcion:string,ingredientes:string,price:number,valoracion:number,categoria:Categoria,tipo:Tipo) {
         this.titulo=titulo;

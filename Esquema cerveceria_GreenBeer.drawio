@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Página-1" id="uT9yLsgqjFHyx92FWntv">
-        <mxGraphModel dx="975" dy="464" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="664" dy="530" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -39,8 +39,8 @@
                         <mxRectangle x="590" y="330" width="140" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="R0fsu3MzCKlck9rWGBXX-2" value="&lt;div&gt;idProducto: FK producto&lt;/div&gt;&lt;div&gt;idPedido: FK Pedido&lt;/div&gt;&lt;div&gt;cantidad : number&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#FFFFFF;rounded=1;" parent="jhApCoZ5-Amo9dIsdA1J-23" vertex="1">
-                    <mxGeometry x="10" y="30" width="150" height="70" as="geometry"/>
+                <mxCell id="R0fsu3MzCKlck9rWGBXX-2" value="&lt;div&gt;id:number&lt;/div&gt;&lt;div&gt;idProducto: FK producto&lt;/div&gt;&lt;div&gt;idPedido: FK Pedido&lt;/div&gt;&lt;div&gt;cantidad : number&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#FFFFFF;rounded=1;" parent="jhApCoZ5-Amo9dIsdA1J-23" vertex="1">
+                    <mxGeometry x="10" y="20" width="150" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="jhApCoZ5-Amo9dIsdA1J-26" value="" style="fontSize=12;html=1;endArrow=ERzeroToMany;startArrow=ERmandOne;rounded=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontColor=#FFFFFF;" parent="1" source="jhApCoZ5-Amo9dIsdA1J-1" target="jhApCoZ5-Amo9dIsdA1J-6" edge="1">
                     <mxGeometry width="100" height="100" relative="1" as="geometry">

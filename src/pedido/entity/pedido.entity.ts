@@ -1,3 +1,4 @@
+import { PedidoProducto } from "src/pedido-producto/entity/pedido-producto";
 import { Usuario } from "src/usuario/entities/usuario.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,  } from "typeorm";
 
@@ -17,4 +18,7 @@ export class Pedido {
     @ManyToOne(()=>Usuario, usuario => usuario.pedidos)
     @JoinColumn({name: "idUsuario"})
     usuario:Usuario;
+
+    @OneToMany(()=>PedidoProducto, pedProd=> pedProd.pedido)
+    pedidosProducto: PedidoProducto[];
 }
