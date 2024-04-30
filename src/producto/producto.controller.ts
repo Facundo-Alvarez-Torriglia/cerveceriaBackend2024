@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { Producto } from './entidad/Producto.entity';
 import { DtoProducto } from './dto/DtoProducto.dto';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { AdminGuard } from 'src/auth/guard/admin.guard';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('producto')
 export class ProductoController {
@@ -22,6 +25,8 @@ export class ProductoController {
 
     @Get(':id')
     @HttpCode(200)
+    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     async getProductoById(@Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
         })) id: number): Promise<Producto> {

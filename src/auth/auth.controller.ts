@@ -9,7 +9,7 @@ import { Role } from 'src/rol/rol.enum';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService, private userService: UsuarioService) {}
+  constructor(private authService: AuthService, private userService: UsuarioService) { }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -17,10 +17,13 @@ export class AuthController {
     return this.authService.signIn(signInDto.email, signInDto.password, signInDto.role);
   }
 
+
+
   @Get('profile')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.User)
+  @Roles(Role.Admin, Role.User)
   getProfile(@Request() req) {
     return req.user;
   }
+
 }
