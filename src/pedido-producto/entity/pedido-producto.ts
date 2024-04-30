@@ -1,7 +1,6 @@
 import { Pedido } from "src/pedido/entity/pedido.entity";
 import { Producto } from "src/producto/entidad/Producto.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn  } from "typeorm";
-import { JoinAttribute } from "typeorm/query-builder/JoinAttribute";
 
 
 @Entity()
