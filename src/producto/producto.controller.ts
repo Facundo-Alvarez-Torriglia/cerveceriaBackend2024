@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request, ConflictException } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { Producto } from './entidad/Producto.entity';
 import { DtoProducto } from './dto/DtoProducto.dto';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { AdminGuard } from 'src/auth/guard/admin.guard';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { RequestLoginDto } from 'src/pedido/dto/request-login-dto.dto';
 
 @Controller('producto')
 export class ProductoController {
@@ -42,9 +43,18 @@ export class ProductoController {
 
     @Post()
     @HttpCode(201)
-    async crearProducto(@Body() datos: DtoProducto): Promise<Producto> {
-        try {           
-            return await this.productoService.crearProducto(datos);
+    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
+    async crearProducto(@Request() req:Request & {user:RequestLoginDto},@Body() datos: DtoProducto): Promise<Producto> {
+        try {  
+            
+            const usuarioAutenticado = req.user;
+            console.log(req);
+            if (datos.usuario === usuarioAutenticado.sub) {
+                
+                return await this.productoService.crearProducto(datos);
+            }
+            throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado ${usuarioAutenticado.sub}.`)
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -54,11 +64,17 @@ export class ProductoController {
     }
 
   @Put(':id')
-    async actualizarProducto(@Param('id', new ParseIntPipe({
+    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
+    async actualizarProducto(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: DtoProducto): Promise<Producto> {
         try {
+            const usuarioAutenticado = req.user;
+            if (datos.usuario === usuarioAutenticado.sub) {
             return await this.productoService.actualizarProducto(id, datos);
+            }
+            throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -68,11 +84,16 @@ export class ProductoController {
     }
 
     @Delete(':id')
-    async eliminarProducto(@Param('id', new ParseIntPipe({
+    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
+    async eliminarProducto(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
-    })) id: number): Promise<Boolean> {
+    })) id: number, @Body() datos: DtoProducto): Promise<Boolean> {
         try {
+            const usuarioAutenticado = req.user;
+            if (datos.usuario === usuarioAutenticado.sub) {
             return await this.productoService.eliminarProducto(id);
+            }
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
