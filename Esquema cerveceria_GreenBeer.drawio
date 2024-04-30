@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Página-1" id="uT9yLsgqjFHyx92FWntv">
-        <mxGraphModel dx="664" dy="530" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="664" dy="607" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -17,10 +17,10 @@
                     <mxGeometry x="10" y="30" width="160" height="140" as="geometry"/>
                 </mxCell>
                 <mxCell id="jhApCoZ5-Amo9dIsdA1J-3" value="Pedido" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;strokeWidth=2;fontColor=#ffffff;rounded=1;" parent="1" vertex="1">
-                    <mxGeometry x="340" y="330" width="200" height="200" as="geometry"/>
+                    <mxGeometry x="340" y="330" width="220" height="200" as="geometry"/>
                 </mxCell>
-                <mxCell id="4UzkKI2sTNi-MiWqPZaZ-12" value="id: number&lt;div&gt;idProducto: FK producto&lt;/div&gt;&lt;div&gt;idUsuario: FK Usuario&lt;/div&gt;&lt;div&gt;fecha : date&lt;/div&gt;&lt;div&gt;idMetodoPago: FK MetodoPago&lt;/div&gt;&lt;div&gt;detalle: string&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;strokeWidth=2;fontColor=#FFFFFF;rounded=1;" parent="jhApCoZ5-Amo9dIsdA1J-3" vertex="1">
-                    <mxGeometry x="10" y="30" width="190" height="100" as="geometry"/>
+                <mxCell id="4UzkKI2sTNi-MiWqPZaZ-12" value="id: number&lt;div&gt;idPedidoProducto: FK Pedido-Prod&lt;/div&gt;&lt;div&gt;idUsuario: FK Usuario&lt;/div&gt;&lt;div&gt;fecha : date&lt;/div&gt;&lt;div&gt;idMetodoPago: FK MetodoPago&lt;/div&gt;&lt;div&gt;detalle: string&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;strokeWidth=2;fontColor=#FFFFFF;rounded=1;" parent="jhApCoZ5-Amo9dIsdA1J-3" vertex="1">
+                    <mxGeometry x="10" y="30" width="210" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="jhApCoZ5-Amo9dIsdA1J-6" value="Reserva" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;startSize=23;strokeWidth=2;fontColor=#ffffff;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="80" y="80" width="200" height="200" as="geometry"/>
