@@ -4,9 +4,10 @@ import { MetodoPagoService } from './metodoPago.service';
 import { MetodoPagoController } from './metodoPago.controller';
 import { MetodoPago } from './entities/MetodoPago.entity';
 import { Reserva } from 'src/reservas/entities/Reserva.entity';
+import { Pedido } from 'src/pedido/entity/pedido.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MetodoPago,Reserva])],
+  imports: [TypeOrmModule.forFeature([MetodoPago,Reserva, Pedido])],
   providers: [MetodoPagoService],
   controllers: [MetodoPagoController],
 })

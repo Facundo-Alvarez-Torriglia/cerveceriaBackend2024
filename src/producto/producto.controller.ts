@@ -26,8 +26,6 @@ export class ProductoController {
 
     @Get(':id')
     @HttpCode(200)
-    @UseGuards(AuthGuard)
-    @UseGuards(AdminGuard)
     async getProductoById(@Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
         })) id: number): Promise<Producto> {

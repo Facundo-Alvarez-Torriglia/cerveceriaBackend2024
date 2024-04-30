@@ -12,11 +12,11 @@ export class PedidoProducto {
     @Column({ type: Number, nullable: false, default: 0 })
     cantidad: number;
 
-    @ManyToOne(()=> Pedido, pedido=> pedido.pedidosProducto, {cascade: true})
+    @ManyToOne(()=> Pedido, pedido=> pedido.pedidosProducto)
     @JoinColumn({name:"idPedido"})
     pedido: Pedido;
 
-    @ManyToOne(()=> Producto, producto=> producto.pedidoProductos,{cascade: true})
+    @ManyToOne(()=> Producto, producto=> producto.pedidoProductos)
     @JoinColumn({ name:"idProducto" })
     producto:Producto;
 }

@@ -10,7 +10,7 @@ export class ProductoService {
 
     async getProductos(): Promise <Producto[]> {
         try {
-            const criterio : FindManyOptions = { relations: ['categoria', 'tipo', 'pedidoProductos']};
+            const criterio : FindManyOptions = { relations: ['categoria', 'tipo', 'pedidoProductos', 'pedidoProductos.pedido.usuario']};
             const productos: Producto[] = await this.productoRepository.find(criterio);
             if(productos) return productos;
             throw new NotFoundException(`No hay productos registrados en la base de datos`);
