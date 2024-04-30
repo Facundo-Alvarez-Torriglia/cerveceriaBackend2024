@@ -14,12 +14,14 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
     
-    if (!requiredRoles || !Array.isArray(requiredRoles)) {
-      // Manejar el caso en que requiredRoles no es un array
+      if (!requiredRoles || !Array.isArray(requiredRoles)) {
+      
       return false;
     }
 
     const { user } = context.switchToHttp().getRequest();
+    console.log(user);
+    
     return requiredRoles.includes(user.role);
 
   }

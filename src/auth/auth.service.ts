@@ -13,12 +13,8 @@ export class AuthService {
         if (!user || user.password !== pass) {
             throw new UnauthorizedException();
         }
-
-        if (user.role === Role.User && rol === Role.Admin) {
-            throw new UnauthorizedException('No tienes permisos para iniciar sesión como administrador');
-        }
-
-        const payload = { sub: user.id, email: user.email, role: user.role };
+              
+           const payload = { sub: user.id, email: user.email, role: user.role };
         return {
             access_token: await this.jwtService.signAsync(payload),
         };
