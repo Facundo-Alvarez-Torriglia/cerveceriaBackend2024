@@ -14,14 +14,7 @@ export class ProductoController {
     @Get()
     @HttpCode(200)
     async getProductos(): Promise<Producto[]> {
-        try {
-            return await this.productoService.getProductos();
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener los productos: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.productoService.getProductos();
     }
 
     @Get(':id')
@@ -29,36 +22,22 @@ export class ProductoController {
     async getProductoById(@Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
         })) id: number): Promise<Producto> {
-        try {
             return await this.productoService.getProductoById(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener el producto: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }  
-    }
+        }
 
     @Post()
     @HttpCode(201)
     @UseGuards(AuthGuard)
     @UseGuards(AdminGuard)
     async crearProducto(@Request() req:Request & {user:RequestLoginDto},@Body() datos: DtoProducto): Promise<Producto> {
-        try {  
+        
+        const usuarioAutenticado = req.user;
+        console.log(req);
+        if (datos.usuario === usuarioAutenticado.sub) {
             
-            const usuarioAutenticado = req.user;
-            console.log(req);
-            if (datos.usuario === usuarioAutenticado.sub) {
-                
-                return await this.productoService.crearProducto(datos);
-            }
-            throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado ${usuarioAutenticado.sub}.`)
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al crear el producto: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }  
+            return await this.productoService.crearProducto(datos);
+        }
+        throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado ${usuarioAutenticado.sub}.`)
     }
 
   @Put(':id')
@@ -67,18 +46,11 @@ export class ProductoController {
     async actualizarProducto(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: DtoProducto): Promise<Producto> {
-        try {
-            const usuarioAutenticado = req.user;
-            if (datos.usuario === usuarioAutenticado.sub) {
+        const usuarioAutenticado = req.user;
+        if (datos.usuario === usuarioAutenticado.sub) {
             return await this.productoService.actualizarProducto(id, datos);
-            }
-            throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al actualizar el producto: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        } 
+        }
+        throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
     }
 
     @Delete(':id')
@@ -87,16 +59,9 @@ export class ProductoController {
     async eliminarProducto(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: DtoProducto): Promise<Boolean> {
-        try {
-            const usuarioAutenticado = req.user;
-            if (datos.usuario === usuarioAutenticado.sub) {
+        const usuarioAutenticado = req.user;
+        if (datos.usuario === usuarioAutenticado.sub) {
             return await this.productoService.eliminarProducto(id);
-            }
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al eliminar el producto: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

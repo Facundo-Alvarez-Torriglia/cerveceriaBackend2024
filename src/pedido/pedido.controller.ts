@@ -14,14 +14,7 @@ export class PedidoController {
     @Get()
     @HttpCode(200)
     async getPedidos(): Promise<Pedido[]> {
-        try {
-            return await this.pedidoService.getPedidos();
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener los pedidos: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.pedidoService.getPedidos();
     }
 
     @Get(':id')
@@ -29,37 +22,20 @@ export class PedidoController {
     async getPedidoById(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Pedido> {
-        try {
-            return await this.pedidoService.getPedidoById(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener el pedido: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.pedidoService.getPedidoById(id);
     }
 
     @Post()
     @UseGuards(AuthGuard)
     async crearPedido(@Request() req: Request & {user:RequestLoginDto}, @Body() datos: PedidoDto): Promise<Pedido> {
-        try {
-            // Obtener el usuario autenticado desde el objeto de solicitud
+        // Obtener el usuario autenticado desde el objeto de solicitud
 
-            const usuarioAutenticado = req.user;
-
-            console.log(req);
-            if (datos.usuario === usuarioAutenticado.sub) {
-                // Crear el pedido asociado con el usuario autenticado
-                return await this.pedidoService.crearPedido(datos);
-            }
-            throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado ${usuarioAutenticado.sub}.`)
-        } catch (error) {
-
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al crear el pedido: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        const usuarioAutenticado = req.user;
+        if (datos.usuario === usuarioAutenticado.sub) {
+            // Crear el pedido asociado con el usuario autenticado
+            return await this.pedidoService.crearPedido(datos);
         }
+        throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado ${usuarioAutenticado.sub}.`)
     }
 
     @Put(':id')
@@ -67,33 +43,18 @@ export class PedidoController {
     async actualizarPedido(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: PedidoDto): Promise<Pedido> {
-        try {
-            const usuarioAutenticado = req.user;
-            if (datos.usuario === usuarioAutenticado.sub) {
-                   return await this.pedidoService.actualizarPedido(id, datos);
-            }
-            throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
-
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al actualizar el pedido: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        const usuarioAutenticado = req.user;
+        if (datos.usuario === usuarioAutenticado.sub) {
+            return await this.pedidoService.actualizarPedido(id, datos);
         }
+        throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
     }
 
     @Delete(':id')
     async eliminarPedido(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
-        try {
-            return await this.pedidoService.eliminarPedido(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al eliminar el pedido: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.pedidoService.eliminarPedido(id);
     }
 }
 

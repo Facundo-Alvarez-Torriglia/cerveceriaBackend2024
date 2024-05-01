@@ -10,14 +10,7 @@ export class TipoController {
     @Get()
     @HttpCode(200)
     async getTipos(): Promise<Tipo[]> {
-        try {
-            return await this.tipoService.getTipos();
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener los tipos: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.tipoService.getTipos();
     }
 
     @Get(':id')
@@ -25,54 +18,26 @@ export class TipoController {
     async getTipoById(@Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
         })) id: number): Promise<Tipo> {
-        try {
             return await this.tipoService.getTipoById(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener el tipo: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }  
     }
 
     @Post()
     @HttpCode(201)
     async crearTipo(@Body() datos: DtoTipo): Promise<Tipo> {
-        try {
-            return await this.tipoService.crearTipo(datos);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al crear el tipo: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }  
+        return await this.tipoService.crearTipo(datos);
     }
 
     @Put(':id')
     async actualizarTipo(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: DtoTipo): Promise<Tipo> {
-        try {
-            return await this.tipoService.actualizarTipo(id, datos);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al actualizar el tipo: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        } 
+        return await this.tipoService.actualizarTipo(id, datos);
     }
 
     @Delete(':id')
     async eliminarTipo(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
-        try {
-            return await this.tipoService.eliminarTipo(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al eliminar el tipo: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.tipoService.eliminarTipo(id);
     }
 }
