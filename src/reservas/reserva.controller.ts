@@ -11,14 +11,7 @@ export class ReservaController {
     @Get()
     @HttpCode(200)
     async getReservas(): Promise<Reserva[]> {
-        try {
-            return await this.reservaService.getReservas();
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener las reservas: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.reservaService.getReservas();
     }
 
     @Get(':id')
@@ -26,28 +19,14 @@ export class ReservaController {
     async getReservaById(@Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
         })) id: number): Promise<Reserva> {
-        try {
             return await this.reservaService.getReservaById(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener la reserva: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }  
     }
 
     @Post()
     @UseGuards(AuthGuard) // Autenticación mediante AuthGuard
     @HttpCode(201)
     async crearReserva(@Body() datos: ReservaDto): Promise<Reserva> {
-        try {
-            return await this.reservaService.crearReserva(datos);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al crear la reserva: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }  
+        return await this.reservaService.crearReserva(datos);
     }
 
     @Put(':id')
@@ -55,27 +34,13 @@ export class ReservaController {
     async actualizarReserva(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: ReservaDto): Promise<Reserva> {
-        try {
-            return await this.reservaService.actualizarReserva(id, datos);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al actualizar la reserva: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        } 
+        return await this.reservaService.actualizarReserva(id, datos);
     }
 
     @Delete(':id')
     async eliminarReserva(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
-        try {
-            return await this.reservaService.eliminarReserva(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al eliminar la reserva: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.reservaService.eliminarReserva(id);
     }
 }
