@@ -14,14 +14,7 @@ export class PedidoController {
     @Get()
     @HttpCode(200)
     async getPedidos(): Promise<Pedido[]> {
-        try {
-            return await this.pedidoService.getPedidos();
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener los pedidos: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.pedidoService.getPedidos();
     }
 
     @Get(':id')
@@ -29,14 +22,7 @@ export class PedidoController {
     async getPedidoById(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Pedido> {
-        try {
-            return await this.pedidoService.getPedidoById(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: 'Error al obtener el pedido: ' + error.message,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.pedidoService.getPedidoById(id);
     }
 
     @Post()
