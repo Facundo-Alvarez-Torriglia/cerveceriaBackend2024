@@ -40,7 +40,7 @@ export class UsuarioService {
 
   public async findAllUser():Promise<Usuario[]> {
     try {
-      let criterio: FindManyOptions = { relations: ['pedidos', 'reservas', 'pedido.pedidosProducto.producto'] };
+      let criterio: FindManyOptions = { relations: ['pedidos', 'reservas'] };
       const user = await this.usuarioRepository.find(criterio);
       if (user) return user;
       throw new Error('El fichero de usuario está vacio. Debe realizar primero una carga de datos')
@@ -56,7 +56,7 @@ export class UsuarioService {
 
   public async findOneUser(email:string): Promise<Usuario> {
     try {
-      let criterio: FindOneOptions = { relations: ['pedidos', 'reservas', 'pedido.pedidosProducto.producto'], where: { email: email } };
+      let criterio: FindOneOptions = { relations: ['pedidos', 'reservas'], where: { email: email } };
       const user = await this.usuarioRepository.findOne(criterio);
       if (user) return user;
       throw new NotFoundException(`Es usuario al cual hace referencia el id ${email} no se encuentra en la base de datos. Verifique los campos ingresados e intente nuevamente`);
@@ -68,10 +68,15 @@ export class UsuarioService {
 
   async findOne(id: number): Promise<Usuario> {
     try {
-      let criterio: FindOneOptions = { relations: ['pedidos','reservas', 'pedidos.pedidosProducto.producto'], where: { id: id } };
+      let criterio: FindOneOptions = { relations: ['pedidos','reservas'], where: { id: id } };
       const user = await this.usuarioRepository.findOne(criterio);
-      if (user) return user;
-      throw new NotFoundException(`El usuario con id ${id} al cual hace referencia no existe en la base de datos`);
+      if (user) {
+        console.log("Estoy aqui");
+        
+        return user} else {
+          throw new NotFoundException(`El usuario con id ${id} al cual hace referencia no existe en la base de datos`);
+
+        }
     } catch (error) {
       throw new HttpException({ status: HttpStatus.NOT_FOUND, error: `Se produjo un error al intentar obtener el usuario con id ${id}. Compruebe los datos ingresados e intente nuevamente` },
         HttpStatus.NOT_FOUND);

@@ -12,7 +12,7 @@ export class PedidoProductoService {
 
     async getPedidosProductos(): Promise<PedidoProducto[]> {
         try {
-            const criterio: FindManyOptions = {relations: ['producto', 'pedido', 'pedido.usuario']};
+            const criterio: FindManyOptions = {relations: ['producto', 'pedido']};
             const pedidosProductos: PedidoProducto[] = await this.pedidoProductoRepository.find(criterio);
             if (pedidosProductos) return pedidosProductos;
             throw new NotFoundException(`No hay pedidos de productos registrados en la base de datos`);
@@ -26,7 +26,7 @@ export class PedidoProductoService {
 
     async getPedidoProductoById(id: number): Promise<PedidoProducto> {
         try {
-            const criterio = { relations: ['producto', 'pedido', 'pedido.usuario'], where: { id } };
+            const criterio = { relations: ['producto', 'pedido'], where: { id } };
             const pedidoProducto: PedidoProducto = await this.pedidoProductoRepository.findOne(criterio);
             if (pedidoProducto) return pedidoProducto;
             throw new NotFoundException(`No se encontró un pedido de producto con el id ${id}`);
@@ -38,16 +38,7 @@ export class PedidoProductoService {
         }
     }
 
-    /* async comprobacionPedidoProducto(pedidoDto: pedidoProductoDto): Promise<void> {
-        if (!pedidoDto || !pedidoDto.cantidad) {
-            throw new HttpException({
-                status: HttpStatus.BAD_REQUEST,
-                error: `El nombre y la cantidad son campos obligatorios para el pedido de producto`,
-            }, HttpStatus.BAD_REQUEST);
-        }
-    } */
-
-    async createPedidoProducto(pedidoDto: pedidoProductoDto): Promise<PedidoProducto> {
+      async createPedidoProducto(pedidoDto: pedidoProductoDto): Promise<PedidoProducto> {
         try {
             
             // Si no existe, proceder a crear el nuevo pedido de producto
