@@ -63,7 +63,7 @@ export class UsuarioService {
 
   public async findAllUser():Promise<Usuario[]> {
     try {
-      let criterio: FindManyOptions = { relations: ['pedidos', 'reservas'] };
+      let criterio: FindManyOptions = { relations: ['pedidos', 'reservas', 'pedidos.pedidosProducto.producto'] };
       const user = await this.usuarioRepository.find(criterio);
       if (user) return user;
       throw new Error('El fichero de usuario está vacio. Debe realizar primero una carga de datos')
@@ -91,7 +91,7 @@ export class UsuarioService {
 
   async findOne(id: number): Promise<Usuario> {
     try {
-      let criterio: FindOneOptions = { relations: ['pedidos','reservas'], where: { id: id } };
+      let criterio: FindOneOptions = { relations: ['pedidos','reservas', 'pedidos.pedidosProducto.producto'], where: { id: id } };
       const user = await this.usuarioRepository.findOne(criterio);
       if (user) {
         console.log("Estoy aqui");
