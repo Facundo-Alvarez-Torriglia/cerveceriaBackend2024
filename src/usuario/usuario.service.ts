@@ -2,13 +2,36 @@ import { BadRequestException, ConflictException, HttpException, HttpStatus, Inje
 import { UsuarioDto } from './dto/create-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository, UpdateResult } from 'typeorm';
 import { Role } from 'src/rol/rol.enum';
 
 
 @Injectable()
 export class UsuarioService {
   constructor(@InjectRepository(Usuario) private readonly usuarioRepository: Repository<Usuario>) { }
+  async softDelete(id: number){
+
+    // Busco el producto
+    const usuarioExists: Usuario = await this.findOne(id);
+
+    // Si el producto no existe, lanzamos una excepcion
+    if(!usuarioExists){
+        throw new ConflictException('El usuario con el id ' + id + ' no existe');
+    }
+
+    // Si el producto esta borrado, lanzamos una excepcion
+    if(usuarioExists.deleted){
+        throw new ConflictException('El usuario esta ya borrado');
+    }
+    // Actualizamos la propiedad deleted
+    const rows: UpdateResult = await this.usuarioRepository.update(
+      { id },
+      { deleted: true }
+  );
+
+  // Si afecta a un registro, devolvemos true
+  return rows.affected == 1;
+}
 
   public async create(userData: UsuarioDto): Promise<Usuario> {
     if (userData.role && ![Role.User, Role.Admin].includes(userData.role)){

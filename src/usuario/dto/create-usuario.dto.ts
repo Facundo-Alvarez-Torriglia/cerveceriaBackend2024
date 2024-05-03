@@ -29,4 +29,6 @@ export class UsuarioDto {
     @IsString()
     role: Role;
 
+    deleted:false;
+
 }
