@@ -12,6 +12,9 @@ export class Categoria {
     @OneToMany(()=> Producto, producto => producto.categoria)
     productos:Producto [];
 
+    @Column({ type: Boolean, nullable: false, default: false })
+    deleted?: boolean;
+    
     constructor(nombre:string){
         this.nombre=nombre;
     }

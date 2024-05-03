@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { CategoriaService } from './categoria.service';
 import { Categoria } from './entidad/Categoria.entity';
 import { DtoCategoria } from './dto/DtoCategoria.dto';
+import { AdminGuard } from 'src/auth/guard/admin.guard';
 
 @Controller('categoria')
 export class CategoriaController {
@@ -13,18 +14,41 @@ export class CategoriaController {
         return await this.categoriaService.getCategorias();
     }
 
-    @Get(':id')
+    @Get('/activa')
     @HttpCode(200)
-    async getCategoriaById(@Param('id', new ParseIntPipe({
+    async getCategoriasActivas(): Promise<Categoria[]> {
+        return await this.categoriaService.getCategoriasActivas();
+    }
+
+    @Get(`:id`)
+    @UseGuards(AdminGuard)
+    @HttpCode(200)
+    async getCategoriaActivaById(@Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
         })) id: number): Promise<Categoria> {
         return await this.categoriaService.getCategoriaById(id); 
     }
 
+    @Get('/activa/:id')
+    @HttpCode(200)
+    async getCategoriaById(@Param('id', new ParseIntPipe({
+            errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+        })) id: number): Promise<Categoria> {
+          return await this.categoriaService.getCategoriaByIdActivo(id); 
+    }
+
+
     @Post()
     @HttpCode(201)
     async crearCategoria(@Body() datos: DtoCategoria): Promise<Categoria> {
         return await this.categoriaService.crearCategoria(datos);
+    }
+
+    @Patch(':id')
+    async activarCategoria(@Param('id', new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+    })) id: number): Promise<Boolean> {
+        return await this.categoriaService.softReactvarCategoria(id);
     }
 
     @Put(':id')
@@ -38,6 +62,6 @@ export class CategoriaController {
     async eliminarCategoria(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
-        return await this.categoriaService.eliminarCategoria(id);
+        return await this.categoriaService.softEliminarCategoria(id);
     }
 }

@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Categoria } from './entidad/Categoria.entity';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository, UpdateResult } from 'typeorm';
 import { DtoCategoria } from './dto/DtoCategoria.dto';
 
 @Injectable()
@@ -21,11 +21,40 @@ export class CategoriaService {
         }
     }
 
+    async getCategoriasActivas(): Promise <Categoria[]> {
+        try {
+            const criterio : FindManyOptions = { relations: ['productos'], where:{deleted:false}};
+            const categorias: Categoria[] = await this.categoriaRepository.find(criterio);
+            if(categorias) return categorias;
+            throw new NotFoundException(`No hay categorias registrados en la base de datos`);
+        } catch (error) {
+            throw new HttpException({ status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar leer los categorias en la base de datos; ${error}`},
+                HttpStatus.NOT_FOUND);
+        }
+    }
+
     async getCategoriaById(id:number): Promise <Categoria>{
         try {
             const criterio: FindOneOptions = { 
                 relations: ['productos'],
                 where: { idCategoria: id }
+            }
+            const categoria: Categoria = await this.categoriaRepository.findOne(criterio);
+            if(categoria) return categoria;
+            throw new NotFoundException(`No se encontre un categoria con el id ${id}`);
+        } catch (error) {
+            throw new HttpException({ status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar leer el categoria de id ${id} en la base de datos; ${error}`},
+                HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async getCategoriaByIdActivo(id:number): Promise <Categoria>{
+        try {
+            const criterio: FindOneOptions = { 
+                relations: ['productos'],
+                where: { idCategoria: id,  where:{deleted:false}}
             }
             const categoria: Categoria = await this.categoriaRepository.findOne(criterio);
             if(categoria) return categoria;
@@ -89,4 +118,52 @@ export class CategoriaService {
                 HttpStatus.NOT_FOUND);
         }
     }
+
+    async softEliminarCategoria(id:number): Promise <Boolean> {
+
+            // Busco el producto
+            const categoriaExists: Categoria = await this.getCategoriaById(id);
+    
+            // Si el producto no existe, lanzamos una excepcion
+            if(!categoriaExists){
+                throw new ConflictException('La categoría con el id ' + id + ' no existe');
+            }
+    
+            // Si el producto esta borrado, lanzamos una excepcion
+            if(categoriaExists.deleted){
+                throw new ConflictException('La categoría esta ya borrado');
+            }
+            // Actualizamos la propiedad deleted
+        const rows: UpdateResult = await this.categoriaRepository.update(
+            { idCategoria:id },
+            { deleted: true }
+        );
+
+        // Si afecta a un registro, devolvemos true
+        return rows.affected == 1;
+    }
+
+    async softReactvarCategoria(id:number): Promise <Boolean> {
+
+        // Busco el producto
+        const categoriaExists: Categoria = await this.getCategoriaById(id);
+
+        // Si el producto no existe, lanzamos una excepcion
+        if(!categoriaExists){
+            throw new ConflictException('La categoría con el id ' + id + ' no existe');
+        }
+
+        // Si el producto esta borrado, lanzamos una excepcion
+        if(!categoriaExists.deleted){
+            throw new ConflictException('La categoría esta ya borrado');
+        }
+        // Actualizamos la propiedad deleted
+    const rows: UpdateResult = await this.categoriaRepository.update(
+        { idCategoria:id },
+        { deleted: false }
+    );
+
+    // Si afecta a un registro, devolvemos true
+    return rows.affected == 1;
+}
 }

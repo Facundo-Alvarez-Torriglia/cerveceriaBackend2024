@@ -1,9 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request, ConflictException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request, ConflictException } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
-import { error } from 'console';
 import { RequestLoginDto } from './dto/request-login-dto.dto';
 
 
