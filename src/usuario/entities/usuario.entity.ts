@@ -33,6 +33,9 @@ export class Usuario {
     @Column({ type: 'enum', enum: Role, default: Role.User })
     role: string;
 
+    @Column({ type: Boolean, nullable: false, default: false })
+    deleted?: boolean;
+
     @OneToMany(() => Reserva, reserva => reserva.usuario)
     @JoinColumn({ name: "idReserva" })
     reservas: Reserva[];
