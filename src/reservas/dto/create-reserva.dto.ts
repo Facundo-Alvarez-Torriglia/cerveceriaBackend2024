@@ -21,4 +21,6 @@ export class ReservaDto {
 
     idMetodoPago:MetodoPago;
 
+    usuario:Usuario;
+
 }
