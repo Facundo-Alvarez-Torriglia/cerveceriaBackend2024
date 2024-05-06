@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { TipoService } from './tipo.service';
 import { Tipo } from './entidad/Tipo.entity';
 import { DtoTipo } from './dto/DtoTipo.dto';
@@ -13,6 +13,13 @@ export class TipoController {
         return await this.tipoService.getTipos();
     }
 
+    //Este es solo para los usuarios
+    @Get('tipoUsuarios')
+    @HttpCode(200)
+    async getTiposUsuarios(): Promise<Tipo[]> {
+        return await this.tipoService.getTiposUsuarios();
+    }
+    
     @Get(':id')
     @HttpCode(200)
     async getTipoById(@Param('id', new ParseIntPipe({
@@ -27,6 +34,13 @@ export class TipoController {
         return await this.tipoService.crearTipo(datos);
     }
 
+    @Patch(':id')
+    async activarTipo(@Param('id', new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+    })) id: number): Promise<Boolean> {
+        return await this.tipoService.softReactivarTipo(id);
+    }
+
     @Put(':id')
     async actualizarTipo(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
@@ -35,9 +49,9 @@ export class TipoController {
     }
 
     @Delete(':id')
-    async eliminarTipo(@Param('id', new ParseIntPipe({
+    async softEliminarTipo(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
-        return await this.tipoService.eliminarTipo(id);
+        return await this.tipoService.softEliminarTipo(id);
     }
 }

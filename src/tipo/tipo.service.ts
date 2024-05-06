@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tipo } from './entidad/Tipo.entity';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository, UpdateResult } from 'typeorm';
 import { DtoTipo } from './dto/DtoTipo.dto';
 
 @Injectable()
@@ -18,8 +18,29 @@ export class TipoService {
             throw new HttpException({ status: HttpStatus.NOT_FOUND,
                 error: `Error al intentar leer los tipos en la base de datos; ${error}`},
                 HttpStatus.NOT_FOUND);
+            }
         }
-    }
+        
+        // este devuelve todos los tipos excepto los borrados
+        async getTiposUsuarios(): Promise<Tipo[]> {
+            try {
+                const criterio: FindManyOptions = {
+                    where: { deleted: false }, // Agregar filtro para obtener solo tipos no borrados
+                    relations: ['productos']
+                };
+                const tipos: Tipo[] = await this.tipoRepository.find(criterio);
+                if (tipos.length > 0) {
+                    return tipos;
+                } else {
+                    throw new NotFoundException(`No hay tipos registrados en la base de datos`);
+                }
+            } catch (error) {
+                throw new HttpException({ status: HttpStatus.NOT_FOUND,
+                    error: `Error al intentar leer los tipos en la base de datos; ${error}`},
+                    HttpStatus.NOT_FOUND);
+            }
+        }
+        
 
     async getTipoById(id:number): Promise <Tipo>{
         try {
@@ -76,17 +97,52 @@ export class TipoService {
         }
     }
 
-    async eliminarTipo(id:number): Promise <Boolean> {
-        try {
-            const tipoEliminar: Tipo = await this.getTipoById(id);
-            if (tipoEliminar) {
-               await this.tipoRepository.remove(tipoEliminar);
-               return true; 
-            }
-        } catch (error) {
-            throw new HttpException({ status: HttpStatus.NOT_FOUND,
-                error: `Error al intentar eliminar el tipo de id ${id} en la base de datos; ${error}`},
-                HttpStatus.NOT_FOUND);
+    async softEliminarTipo(id:number): Promise <Boolean> {
+
+        // Busco el tipo
+        const tipoExists: Tipo = await this.getTipoById(id);
+
+        // Si el tipo no existe, lanzamos una excepcion
+        if(!tipoExists){
+            throw new ConflictException('El tipo con el id ' + id + ' no existe');
         }
+
+        // Si el tipo esta borrado, lanzamos una excepcion
+        if(tipoExists.deleted){
+            throw new ConflictException('El tipo esta ya borrado');
+        }
+        // Actualizamos la propiedad deleted
+    const rows: UpdateResult = await this.tipoRepository.update(
+        { idTipo:id },
+        { deleted: true }
+    );
+
+    // Si afecta a un registro, devolvemos true
+    return rows.affected == 1;
+}
+
+async softReactivarTipo(id:number): Promise <Boolean> {
+
+    // Busco el tipo
+    const tipoExists: Tipo = await this.getTipoById(id);
+
+    // Si el tipo no existe, lanzamos una excepcion
+    if(!tipoExists){
+        throw new ConflictException('El tipo con el id ' + id + ' no existe');
     }
+
+    // Si el tipo esta borrado, lanzamos una excepcion
+    if(!tipoExists.deleted){
+        throw new ConflictException('El tipo esta ya borrado');
+    }
+    // Actualizamos la propiedad deleted
+const rows: UpdateResult = await this.tipoRepository.update(
+    { idTipo:id },
+    { deleted: false }
+);
+
+// Si afecta a un registro, devolvemos true
+return rows.affected == 1;
+}
+
 }

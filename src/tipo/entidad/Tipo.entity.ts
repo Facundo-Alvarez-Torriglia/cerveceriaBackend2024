@@ -9,6 +9,9 @@ export class Tipo {
     @Column({ length: 55})
     nombre:string;
 
+    @Column({ type: Boolean, nullable: false, default: false })
+    deleted?: boolean;
+
     @OneToMany(()=> Producto, producto => producto.tipo)
     productos:Producto [];
 
