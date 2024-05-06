@@ -24,19 +24,25 @@ export class UsuarioController {
   
   }
 
-/*   @Get(':id')
+  @Get('/activo')
+  @HttpCode(200)
+  async getCategoriasActivas(): Promise<Usuario[]> {
+      return await this.usuarioService.getUsuarioActivo();
+  }
+
+  @Get(':id')
   @UseGuards(AdminGuard)  
   @HttpCode(200)
   async findOneUser(@Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number): Promise<Usuario> {
     return await this.usuarioService.findOne(id);
    
-  } */
+  } 
 
-  @Get('user/:id')
+  @Get('activo/:id')
   @UseGuards(AuthGuard)  
   @HttpCode(200)
-  async findOneUser(@Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number): Promise<Usuario> {
-    return await this.usuarioService.findOne(id);
+  async findOne(@Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number): Promise<Usuario> {
+    return await this.usuarioService.getUsuarioByIdActivo(id);
    
   }
 
@@ -51,9 +57,5 @@ export class UsuarioController {
     return await this.usuarioService.softDelete(id);
 }
 
- /*  @Delete(':id')
-  @UseGuards(AuthGuard)
-  async removeUser(@Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number): Promise<string> {
-    return this.usuarioService.remove(id);
-  } */
+
 }
