@@ -10,6 +10,8 @@ export class CategoriaService {
 
     async getCategorias(): Promise <Categoria[]> {
         try {
+            console.log("estoy aqui");
+            
             const criterio : FindManyOptions = { relations: ['productos']};
             const categorias: Categoria[] = await this.categoriaRepository.find(criterio);
             if(categorias) return categorias;
@@ -54,10 +56,10 @@ export class CategoriaService {
         try {
             const criterio: FindOneOptions = { 
                 relations: ['productos'],
-                where: { idCategoria: id,  where:{deleted:false}}
+                where: { idCategoria: id}
             }
             const categoria: Categoria = await this.categoriaRepository.findOne(criterio);
-            if(categoria) return categoria;
+            if(categoria&& !categoria.deleted) return categoria;
             throw new NotFoundException(`No se encontre un categoria con el id ${id}`);
         } catch (error) {
             throw new HttpException({ status: HttpStatus.NOT_FOUND,
@@ -120,49 +122,33 @@ export class CategoriaService {
     }
 
     async softEliminarCategoria(id:number): Promise <Boolean> {
-
             // Busco el producto
-            const categoriaExists: Categoria = await this.getCategoriaById(id);
-    
-            // Si el producto no existe, lanzamos una excepcion
-            if(!categoriaExists){
-                throw new ConflictException('La categoría con el id ' + id + ' no existe');
-            }
-    
+            const categoriaExists: Categoria = await this.getCategoriaById(id);   
             // Si el producto esta borrado, lanzamos una excepcion
             if(categoriaExists.deleted){
-                throw new ConflictException('La categoría esta ya borrado');
+                throw new ConflictException('La categoría ya fue borrada con anterioridad');
             }
             // Actualizamos la propiedad deleted
         const rows: UpdateResult = await this.categoriaRepository.update(
             { idCategoria:id },
             { deleted: true }
         );
-
         // Si afecta a un registro, devolvemos true
         return rows.affected == 1;
     }
 
     async softReactvarCategoria(id:number): Promise <Boolean> {
-
         // Busco el producto
         const categoriaExists: Categoria = await this.getCategoriaById(id);
-
-        // Si el producto no existe, lanzamos una excepcion
-        if(!categoriaExists){
-            throw new ConflictException('La categoría con el id ' + id + ' no existe');
-        }
-
         // Si el producto esta borrado, lanzamos una excepcion
         if(!categoriaExists.deleted){
-            throw new ConflictException('La categoría esta ya borrado');
+            throw new ConflictException('La categoría ya fue activado con anterioridad');
         }
         // Actualizamos la propiedad deleted
     const rows: UpdateResult = await this.categoriaRepository.update(
         { idCategoria:id },
         { deleted: false }
     );
-
     // Si afecta a un registro, devolvemos true
     return rows.affected == 1;
 }

@@ -19,4 +19,25 @@ export class AuthService {
             access_token: await this.jwtService.signAsync(payload),
         };
     }
+
+    getUserFromRequest(request: Request): any {
+        const authHeader = request.headers['authorization'];
+        if (!authHeader) {
+          return null; // No se proporcionó encabezado de autorización
+        }
+    
+        // El encabezado de autorización debería tener el formato "Bearer token"
+        const [bearer, token] = authHeader.split(' ');
+        if (bearer !== 'Bearer' || !token) {
+          throw new UnauthorizedException('Formato de token no válido');
+        }
+    
+        try {
+          // Decodificar el token JWT para obtener los datos del usuario
+          const user = this.jwtService.verify(token);
+          return user;
+        } catch (error) {
+          throw new UnauthorizedException('Token inválido');
+        }
+      }
 }

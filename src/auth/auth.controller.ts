@@ -6,6 +6,7 @@ import { UsuarioService } from 'src/usuario/usuario.service';
 import { UsuarioDto } from 'src/usuario/dto/create-usuario.dto';
 import { Roles } from 'src/rol/roles.decorador';
 import { Role } from 'src/rol/rol.enum';
+import { UsuarioGuard } from './guard/usuario.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -20,7 +21,7 @@ export class AuthController {
 
 
   @Get('profile')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard, UsuarioGuard)
   @Roles(Role.Admin, Role.User)
   getProfile(@Request() req) {
     return req.user;
