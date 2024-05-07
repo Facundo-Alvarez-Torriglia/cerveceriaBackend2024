@@ -22,7 +22,7 @@ export class TipoService {
         }
         
         // este devuelve todos los tipos excepto los borrados
-        async getTiposUsuarios(): Promise<Tipo[]> {
+        async getTiposActivos(): Promise<Tipo[]> {
             try {
                 const criterio: FindManyOptions = {
                     where: { deleted: false }, // Agregar filtro para obtener solo tipos no borrados
@@ -50,7 +50,23 @@ export class TipoService {
             }
             const tipo: Tipo = await this.tipoRepository.findOne(criterio);
             if(tipo) return tipo;
-            throw new NotFoundException(`No se encontre un tipo con el id ${id}`);
+            throw new NotFoundException(`No se encuentra un tipo con el id ${id}`);
+        } catch (error) {
+            throw new HttpException({ status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar leer el tipo de id ${id} en la base de datos; ${error}`},
+                HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async getTipoByIdActivo(id:number): Promise <Tipo>{
+        try {
+            const criterio: FindOneOptions = { 
+                relations: ['productos'],
+                where: { idTipo: id }
+            }
+            const tipo: Tipo = await this.tipoRepository.findOne(criterio);
+            if(tipo && !tipo.deleted) return tipo;
+            throw new NotFoundException(`No se encuentra un tipo con el id ${id}`);
         } catch (error) {
             throw new HttpException({ status: HttpStatus.NOT_FOUND,
                 error: `Error al intentar leer el tipo de id ${id} en la base de datos; ${error}`},
@@ -98,15 +114,8 @@ export class TipoService {
     }
 
     async softEliminarTipo(id:number): Promise <Boolean> {
-
         // Busco el tipo
         const tipoExists: Tipo = await this.getTipoById(id);
-
-        // Si el tipo no existe, lanzamos una excepcion
-        if(!tipoExists){
-            throw new ConflictException('El tipo con el id ' + id + ' no existe');
-        }
-
         // Si el tipo esta borrado, lanzamos una excepcion
         if(tipoExists.deleted){
             throw new ConflictException('El tipo esta ya borrado');
@@ -116,21 +125,13 @@ export class TipoService {
         { idTipo:id },
         { deleted: true }
     );
-
     // Si afecta a un registro, devolvemos true
     return rows.affected == 1;
 }
 
 async softReactivarTipo(id:number): Promise <Boolean> {
-
     // Busco el tipo
     const tipoExists: Tipo = await this.getTipoById(id);
-
-    // Si el tipo no existe, lanzamos una excepcion
-    if(!tipoExists){
-        throw new ConflictException('El tipo con el id ' + id + ' no existe');
-    }
-
     // Si el tipo esta borrado, lanzamos una excepcion
     if(!tipoExists.deleted){
         throw new ConflictException('El tipo esta ya borrado');
@@ -140,7 +141,6 @@ const rows: UpdateResult = await this.tipoRepository.update(
     { idTipo:id },
     { deleted: false }
 );
-
 // Si afecta a un registro, devolvemos true
 return rows.affected == 1;
 }

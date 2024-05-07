@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request, ConflictException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request, ConflictException, Patch } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { Producto } from './entidad/Producto.entity';
 import { DtoProducto } from './dto/DtoProducto.dto';
@@ -40,6 +40,14 @@ export class ProductoController {
         throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado ${usuarioAutenticado.sub}.`)
     }
 
+    @Patch(':id')
+    @UseGuards(AdminGuard)
+    async activarProducto(@Param('id', new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+    })) id: number): Promise<Boolean> {
+        return await this.productoService.softReactivarProducto(id);
+    }
+
   @Put(':id')
     @UseGuards(AuthGuard)
     @UseGuards(AdminGuard)
@@ -54,15 +62,11 @@ export class ProductoController {
     }
 
     @Delete(':id')
-    @UseGuards(AuthGuard)
     @UseGuards(AdminGuard)
-    async eliminarProducto(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
+    async SoftEliminarProducto(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
-    })) id: number, @Body() datos: DtoProducto): Promise<Boolean> {
-        const usuarioAutenticado = req.user;
-        if (datos.usuario === usuarioAutenticado.sub) {
-            return await this.productoService.eliminarProducto(id);
+    })) id: number): Promise<Boolean> {
+            return await this.productoService.softEliminarProducto(id);
         }
     }
-}
 
