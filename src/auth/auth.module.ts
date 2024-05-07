@@ -7,8 +7,6 @@ import { jwtConstants } from './constants';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { UsuarioService } from 'src/usuario/usuario.service';
 import { UsuarioModule } from 'src/usuario/usuario.module';
-import { UsuarioGuard } from './guard/usuario.guard';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([Usuario]),

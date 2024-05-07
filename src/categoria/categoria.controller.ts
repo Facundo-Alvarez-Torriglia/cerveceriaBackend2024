@@ -3,7 +3,6 @@ import { CategoriaService } from './categoria.service';
 import { Categoria } from './entidad/Categoria.entity';
 import { DtoCategoria } from './dto/DtoCategoria.dto';
 import { AdminGuard } from 'src/auth/guard/admin.guard';
-import { UsuarioGuard } from 'src/auth/guard/usuario.guard';
 import { RequestLoginDto } from 'src/pedido/dto/request-login-dto.dto';
 
 @Controller('categoria')
@@ -12,7 +11,6 @@ export class CategoriaController {
 
     @Get()
     @HttpCode(200)
-    @UseGuards(UsuarioGuard)
     async getCategorias(@Request() req: Request & {user:RequestLoginDto}): Promise<Categoria[]> {
         // req obtiene los datos que tiene el Guard
         const usuario=req.user;        
@@ -24,7 +22,6 @@ export class CategoriaController {
     }
 
     @Get(`:id`)
-    @UseGuards(UsuarioGuard)
     @HttpCode(200)
     async getCategoriaActivaById(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
