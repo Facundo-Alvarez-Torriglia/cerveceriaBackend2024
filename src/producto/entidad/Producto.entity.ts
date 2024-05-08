@@ -19,6 +19,8 @@ export class Producto {
     price:number;
     @Column()
     valoracion:number;
+    @Column({ type: Boolean, nullable: false, default: false })
+    deleted?: boolean;
 
     @ManyToOne(()=> Categoria, categoria => categoria.productos)
     @JoinColumn({name: "idCategoria"})
