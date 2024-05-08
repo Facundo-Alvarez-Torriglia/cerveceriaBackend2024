@@ -29,12 +29,13 @@ import { PedidoProductoModule } from './pedido-producto/pedido-producto.module';
   imports: [
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'app') }),
     TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: 'root',
+    type: 'cockroachdb',
+    host: 'rushed-tenrec-14585.7tt.aws-us-east-1.cockroachlabs.cloud',
+    port: 26257,
+    username: 'greenbeer',
+    password: '19hweL863M9TnJ5Ul2zNVw',
     database: 'cerveceria',
+    ssl: true,
     entities: [Sucursal,Usuario,Tipo,Reserva,Producto,MetodoPago,Categoria, Pedido, PedidoProducto], //__dirname + "/entity/*{.js,.ts}"
     synchronize: true,
   }),
