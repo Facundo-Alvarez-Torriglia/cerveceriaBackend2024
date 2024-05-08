@@ -10,7 +10,7 @@ import { UsuarioModule } from 'src/usuario/usuario.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Usuario]),
-    UsuarioModule,
+    //eliminé usuarioModulo por conflicto circular. se chocaba con los datos de authModulo el cual también importa el usuario
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
