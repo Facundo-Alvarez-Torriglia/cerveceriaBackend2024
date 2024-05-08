@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from './entidad/Producto.entity';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository, UpdateResult } from 'typeorm';
 import { DtoProducto } from './dto/DtoProducto.dto';
 
 @Injectable()
@@ -84,17 +84,35 @@ export class ProductoService {
         }
     }
 
-    async eliminarProducto(id:number): Promise <Boolean> {
-        try {
-            const productoEliminar: Producto = await this.getProductoById(id);
-            if (productoEliminar) {
-               await this.productoRepository.remove(productoEliminar);
-               return true; 
+    async softEliminarProducto(id:number): Promise <Boolean> {
+        // Busco el producto
+            const productoExist: Producto = await this.getProductoById(id);
+            // Si el producto esta borrado, lanzamos una excepcion
+            if (!productoExist.deleted) {
+                throw new ConflictException('El producto ya fue borrado con anterioridad');
             }
-        } catch (error) {
-            throw new HttpException({ status: HttpStatus.NOT_FOUND,
-                error: `Error al intentar eliminar el producto de id ${id} en la base de datos; ${error}`},
-                HttpStatus.NOT_FOUND);
-        }
+        // Actualizamos la propiedad deleted
+        const rows: UpdateResult = await this.productoRepository.update(
+            { idProducto:id },
+            { deleted: true }
+        );
+        // Si afecta a un registro, devolvemos true
+        return rows.affected == 1;
     }
+
+    async softReactivarProducto(id:number): Promise <Boolean> {
+        // Busco el producto
+        const productoExists: Producto = await this.getProductoById(id);
+        // Si el producto esta borrado, lanzamos una excepcion
+        if(!productoExists.deleted){
+            throw new ConflictException('El producto ya fue activado con anterioridad');
+        }
+        // Actualizamos la propiedad deleted
+    const rows: UpdateResult = await this.productoRepository.update(
+        { idProducto:id },
+        { deleted: false }
+    );
+    // Si afecta a un registro, devolvemos true
+    return rows.affected == 1;
+}
 }
