@@ -7,7 +7,7 @@ import { Categoria } from './entidad/Categoria.entity';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Producto, Categoria])],
+  imports:[TypeOrmModule.forFeature([Producto, Categoria]), AuthModule],
   controllers: [CategoriaController],
   providers: [CategoriaService]
 })
