@@ -20,6 +20,9 @@ export class Reserva {
     @Column()
     numeroMesa: number
 
+    @Column({ type: Boolean, nullable: false, default: false })
+    deleted?: boolean;
+
     @ManyToOne(() => Usuario, usuario => usuario.reservas)
     @JoinColumn({ name: "idUsuario" })
     usuario: Usuario;
