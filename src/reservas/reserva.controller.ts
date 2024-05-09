@@ -7,31 +7,33 @@ import { RequestLoginDto } from 'src/pedido/dto/request-login-dto.dto';
 
 @Controller('reserva')
 export class ReservaController {
-    constructor(private readonly reservaService: ReservaService) {}
+    constructor(private readonly reservaService: ReservaService) { }
 
     @Get()
+    @UseGuards(AuthGuard)
     @HttpCode(200)
     async getReservas(): Promise<Reserva[]> {
         return await this.reservaService.getReservas();
     }
 
     @Get(':id')
+    @UseGuards(AuthGuard)
     @HttpCode(200)
     async getReservaById(@Param('id', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
-        })) id: number): Promise<Reserva> {
-            return await this.reservaService.getReservaById(id);
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+    })) id: number): Promise<Reserva> {
+        return await this.reservaService.getReservaById(id);
     }
 
     @Post()
-    @UseGuards(AuthGuard) 
+    @UseGuards(AuthGuard)
     @HttpCode(201)
     async crearReserva(@Body() datos: ReservaDto): Promise<Reserva> {
         return await this.reservaService.crearReserva(datos);
     }
 
     @Put(':id')
-    @UseGuards(AuthGuard) 
+    @UseGuards(AuthGuard)
     async actualizarReserva(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: ReservaDto): Promise<Reserva> {
@@ -40,12 +42,12 @@ export class ReservaController {
 
     @Delete(':id')
     @UseGuards(AuthGuard)
-    async eliminarReserva(@Request() req: Request & { user: RequestLoginDto }, @Param('id', new ParseIntPipe({
+    async softEliminarReserva(@Request() req: Request & { user: RequestLoginDto }, @Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: ReservaDto): Promise<Boolean> {
         const usuarioAutenticado = req.user;
         if (datos.usuario === usuarioAutenticado.sub) {
-            return await this.reservaService.eliminarReserva(id);
+            return await this.reservaService.SoftEliminarReserva(id);
         }
     }
 }
