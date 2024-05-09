@@ -8,7 +8,7 @@ id:number
 @Column()
 nombre:string
 
-@Column()
+@Column({nullable:true})
 direccion: string
 
 @Column()

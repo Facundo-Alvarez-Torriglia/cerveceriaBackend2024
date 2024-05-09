@@ -49,16 +49,12 @@ export class ProductoController {
     }
 
   @Put(':id')
-    @UseGuards(AuthGuard)
     @UseGuards(AdminGuard)
-    async actualizarProducto(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
+    async actualizarProducto( @Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: DtoProducto): Promise<Producto> {
-        const usuarioAutenticado = req.user;
-        if (datos.usuario === usuarioAutenticado.sub) {
-            return await this.productoService.actualizarProducto(id, datos);
-        }
-        throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
+        return await this.productoService.actualizarProducto(id, datos);
+       
     }
 
     @Delete(':id')
