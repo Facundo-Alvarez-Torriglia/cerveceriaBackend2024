@@ -3,6 +3,7 @@ import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
 
 
 @Injectable()
@@ -58,13 +59,15 @@ export class PedidoService {
         }
     }
 
-    async actualizarPedido(id: number, datos: PedidoDto): Promise<Pedido> {
+    async actualizarPedido(id: number, datos: PedidoDto, usuario:number): Promise<Pedido> {
         try {
             const pedidoActualizar: Pedido = await this.getPedidoById(id);
-            if (pedidoActualizar) {
+            if (pedidoActualizar && pedidoActualizar.usuario.id==usuario) {
                 Object.assign(pedidoActualizar, datos);
                 const pedidoActualizado: Pedido = await this.pedidoRepository.save(pedidoActualizar);
                 return pedidoActualizado;
+            } else {                
+                throw new NotFoundException(`No puedes actualizar los pedidos de otros usuarios: usuario1 ${pedidoActualizar.usuario.id}, usuario2 ${usuario}`)
             }
         } catch (error) {
             throw new HttpException({ 

@@ -28,7 +28,7 @@ export class PedidoController {
     @UseGuards(AuthGuard)
     async crearPedido(@Request() req: Request & {user:RequestLoginDto}, @Body() datos: PedidoDto): Promise<Pedido> {
         // Obtener el usuario autenticado desde el objeto de solicitud
-
+        
         const usuarioAutenticado = req.user;
         if (datos.usuario === usuarioAutenticado.sub) {
             // Crear el pedido asociado con el usuario autenticado
@@ -43,8 +43,10 @@ export class PedidoController {
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: PedidoDto): Promise<Pedido> {
         const usuarioAutenticado = req.user;
+        
         if (datos.usuario === usuarioAutenticado.sub) {
-            return await this.pedidoService.actualizarPedido(id, datos);
+            
+            return await this.pedidoService.actualizarPedido(id, datos, Number(usuarioAutenticado.sub));
         }
         throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
     }
