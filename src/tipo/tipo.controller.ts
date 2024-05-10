@@ -4,12 +4,14 @@ import { Tipo } from './entidad/Tipo.entity';
 import { DtoTipo } from './dto/DtoTipo.dto';
 import { AdminGuard } from 'src/auth/guard/admin.guard';
 import { RequestLoginDto } from 'src/pedido/dto/request-login-dto.dto';
+import { UsuarioGuard } from 'src/auth/guard/usuario.guard';
 
 @Controller('tipo')
 export class TipoController {
     constructor(private readonly tipoService: TipoService) {}
 
     @Get()
+    @UseGuards(UsuarioGuard)
     @HttpCode(200)
     async getTipos(@Request() req: Request & {user:RequestLoginDto}): Promise<Tipo[]> {
         // req obtiene los datos que tiene el Guard
@@ -22,6 +24,7 @@ export class TipoController {
     }
     
     @Get(':id')
+    @UseGuards(UsuarioGuard)
     @HttpCode(200)
     async getTipoById(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
