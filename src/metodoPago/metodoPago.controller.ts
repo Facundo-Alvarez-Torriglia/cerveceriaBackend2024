@@ -21,15 +21,9 @@ export class MetodoPagoController {
 
   @Post()
   @HttpCode(201)
-  @UseGuards(AuthGuard)
   @UseGuards(AdminGuard)
-  async create(@Request() req: Request & { user: RequestLoginDto }, @Body() datos: MetodoPagoDto): Promise<MetodoPagoDto> {
-
-    const usuarioAutenticado = req.user;
-    if (datos.usuario === usuarioAutenticado.sub) {
-      return this.metodoPagoService.create(datos);
-    }
-    throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado ${usuarioAutenticado.sub}.`)
+  async create( @Body() datos: MetodoPagoDto): Promise<MetodoPagoDto> {
+    return this.metodoPagoService.create(datos);
   }
 
   @Get(':id')
