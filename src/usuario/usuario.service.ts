@@ -9,25 +9,28 @@ import { Role } from 'src/rol/rol.enum';
 @Injectable()
 export class UsuarioService {
   constructor(@InjectRepository(Usuario) private readonly usuarioRepository: Repository<Usuario>) { }
- 
+  //crea un usuario
   public async create(userData: UsuarioDto): Promise<Usuario> {
-    if (userData.role && ![Role.User, Role.Admin].includes(userData.role)){
+    //si los datos ingresados no incluye role user o admin no deja crear
+    if (userData.role && ![Role.User, Role.Admin].includes(userData.role)) {
       throw new HttpException(`El rol proporcionado no es válido`, HttpStatus.BAD_REQUEST)
     }
-    
+    //si el email ingresado coincide con uno existente no deja crear
     const existingUser = await this.usuarioRepository.findOne({ where: { email: userData.email } });
     if (existingUser) {
       throw new HttpException('El correo electrónico proporcionado ya está en uso', HttpStatus.CONFLICT);
     }
     try {
+      //si los datos ingresado coinciden con los de la dto y si no se proporciona un role, se asigna user por defecto
       let user: Usuario;
       if (userData.email && userData.password && userData.name && userData.lastname) {
         user = new Usuario(userData.name, userData.lastname, userData.username, userData.email, userData.password, userData.age, userData.direccion, userData.role);
-        if(userData.role){
+        if (userData.role) {
           user.role = userData.role;
         } else {
           user.role = Role.User
         }
+        //si está todo ok guarda ese user nuevo y lo retorna
         user = await this.usuarioRepository.save(user);
         return user;
       } else {
@@ -38,7 +41,8 @@ export class UsuarioService {
     }
   }
 
-  public async findAllUser():Promise<Usuario[]> {
+  //obtiene todos los usuarios activos y no activos
+  public async findAllUser(): Promise<Usuario[]> {
     try {
       let criterio: FindManyOptions = { relations: ['pedidos', 'reservas', 'pedidos.pedidosProducto.producto'] };
       const user = await this.usuarioRepository.find(criterio);
@@ -52,20 +56,24 @@ export class UsuarioService {
     }
   }
 
-  async getUsuarioActivo(): Promise <Usuario[]> {
+  //obtiene todos los usuarios activos que no han sido eliminados de la db
+  async getUsuarioActivo(): Promise<Usuario[]> {
     try {
-        const criterio : FindManyOptions = { relations: ['pedidos', 'reservas', 'pedidos.pedidosProducto.producto'], where:{deleted:false}};
-        const usuario: Usuario[] = await this.usuarioRepository.find(criterio);
-        if(usuario) return usuario;
-        throw new NotFoundException(`No hay usuarios registrados en la base de datos`);
+      const criterio: FindManyOptions = { relations: ['pedidos', 'reservas', 'pedidos.pedidosProducto.producto'], where: { deleted: false } };
+      const usuario: Usuario[] = await this.usuarioRepository.find(criterio);
+      if (usuario) return usuario;
+      throw new NotFoundException(`No hay usuarios registrados en la base de datos`);
     } catch (error) {
-        throw new HttpException({ status: HttpStatus.NOT_FOUND,
-            error: `Error al intentar leer los usuarios en la base de datos; ${error}`},
-            HttpStatus.NOT_FOUND);
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: `Error al intentar leer los usuarios en la base de datos; ${error}`
+      },
+        HttpStatus.NOT_FOUND);
     }
-}
+  }
 
-  public async findOneUser(email:string): Promise<Usuario> {
+  //obtiene un usuario según el email ingresado. método utilizado para el login
+  public async findOneUser(email: string): Promise<Usuario> {
     try {
       let criterio: FindOneOptions = { relations: ['pedidos', 'reservas'], where: { email: email } };
       const user = await this.usuarioRepository.findOne(criterio);
@@ -77,43 +85,57 @@ export class UsuarioService {
     }
   }
 
+  //obtiene un usuario según el id ingresado haya sido eliminado o no
   async findOne(id: number): Promise<Usuario> {
     try {
-      let criterio: FindOneOptions = { relations: ['pedidos','reservas', 'pedidos.pedidosProducto.producto'], where: { id: id } };
+      //busca según los 2 criterios ingresados, relaciones y coincidencia por id
+      let criterio: FindOneOptions = { relations: ['pedidos', 'reservas', 'pedidos.pedidosProducto.producto'], where: { id: id } };
+      //si existe coincidencia lo guarda en la const user y lo retorna
       const user = await this.usuarioRepository.findOne(criterio);
       if (user) {
         console.log("Estoy aqui");
-        
-        return user} else {
-          throw new NotFoundException(`El usuario con id ${id} al cual hace referencia no existe en la base de datos`);
 
-        }
+        return user
+      } else {
+        throw new NotFoundException(`El usuario con id ${id} al cual hace referencia no existe en la base de datos`);
+
+      }
     } catch (error) {
       throw new HttpException({ status: HttpStatus.NOT_FOUND, error: `Se produjo un error al intentar obtener el usuario con id ${id}. Compruebe los datos ingresados e intente nuevamente` },
         HttpStatus.NOT_FOUND);
     }
   }
 
-  async getUsuarioByIdActivo(id:number): Promise <Usuario>{
+  //obtener el usuario que no ha sido removido según el id
+  async getUsuarioByIdActivo(id: number): Promise<Usuario> {
     try {
-        const criterio: FindOneOptions = { 
-            relations: ['pedidos', 'reservas'],
-            where: { idUsuario: id,  where:{deleted:false}}
-        }
-        const usuario: Usuario = await this.usuarioRepository.findOne(criterio);
-        if(usuario) return usuario;
-        throw new NotFoundException(`No se encontre el usuario con el id ${id}`);
+      //utiliza 3 criterios de búsqueda, que esten relacionados con las entidades mensionadas, 
+      //que el id ingresado coincida con el buscado y donde no ha sido elimanado
+      const criterio: FindOneOptions = {
+        relations: ['pedidos', 'reservas'],
+        where: { idUsuario: id, where: { deleted: false } }
+      }
+      //busca un usuario según el criterio anterior utilizando el repositorio de typeOrm
+      const usuario: Usuario = await this.usuarioRepository.findOne(criterio);
+      //si el usuario ha sido encontrado lo retorna
+      if (usuario) return usuario;
+      throw new NotFoundException(`No se encontre el usuario con el id ${id}`);
     } catch (error) {
-        throw new HttpException({ status: HttpStatus.NOT_FOUND,
-            error: `Error al intentar leer el usuario de id ${id} en la base de datos; ${error}`},
-            HttpStatus.NOT_FOUND);
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: `Error al intentar leer el usuario de id ${id} en la base de datos; ${error}`
+      },
+        HttpStatus.NOT_FOUND);
     }
-}
+  }
 
-  async update(id: number, datos: UsuarioDto) : Promise<Usuario>{
-    try{
-      let updateUser: Usuario  =await this.findOne(id);
-      if (updateUser){
+  //actualizar datos
+  async update(id: number, datos: UsuarioDto): Promise<Usuario> {
+    try {
+      //busco un usuario por id
+      let updateUser: Usuario = await this.findOne(id);
+      //si coinciden los datos obtenidos con los agregados guarda los cambios
+      if (updateUser) {
         updateUser.name = datos.name;
         updateUser.lastname = datos.lastname;
         updateUser.username = datos.username;
@@ -123,33 +145,35 @@ export class UsuarioService {
         updateUser.direccion = datos.direccion;
         updateUser = await this.usuarioRepository.save(updateUser);
         return updateUser;
-      } 
+      }
     } catch (error) {
-      throw new HttpException({ status: HttpStatus.NOT_FOUND,
-          error: `Error al intentar actualizar al usuario de id: ${id} con el nombre ${datos.email} en la base de datos; ${error}`},
-          HttpStatus.NOT_FOUND);
-  }
-    
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: `Error al intentar actualizar al usuario de id: ${id} con el nombre ${datos.email} en la base de datos; ${error}`
+      },
+        HttpStatus.NOT_FOUND);
+    }
+
   }
 
-  async softDelete(id: number){
+  async softDelete(id: number) {
     // Busco el producto
     const usuarioExists: Usuario = await this.findOne(id);
     // Si el producto no existe, lanzamos una excepcion
-    if(!usuarioExists){
-        throw new ConflictException('El usuario con el id ' + id + ' no existe');
+    if (!usuarioExists) {
+      throw new ConflictException('El usuario con el id ' + id + ' no existe');
     }
     // Si el producto esta borrado, lanzamos una excepcion
-    if(usuarioExists.deleted){
-        throw new ConflictException('El usuario esta ya borrado');
+    if (usuarioExists.deleted) {
+      throw new ConflictException('El usuario esta ya borrado');
     }
     // Actualizamos la propiedad deleted
     const rows: UpdateResult = await this.usuarioRepository.update(
       { id },
       { deleted: true }
-  );
-  // Si afecta a un registro, devolvemos true
-  return rows.affected == 1;
-}
+    );
+    // Si afecta a un registro, devolvemos true
+    return rows.affected == 1;
+  }
 
 }

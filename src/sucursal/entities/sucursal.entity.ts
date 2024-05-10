@@ -8,8 +8,8 @@ id:number
 @Column()
 nombre:string
 
-@Column()
-dirección: string
+@Column({nullable:true})
+direccion: string
 
 @Column()
 telefono:string
@@ -17,10 +17,13 @@ telefono:string
 @Column()
 imagen:string
 
+@Column({ type: Boolean, nullable: false, default: false })
+deleted?: boolean;
+
 constructor(nombre: string,direccion:string,telefono:string, imagen:string){
 
 this.nombre = nombre;
-this.dirección = direccion;
+this.direccion = direccion;
 this.telefono =telefono;
 this.imagen = imagen
 }

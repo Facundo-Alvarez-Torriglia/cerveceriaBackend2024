@@ -11,6 +11,7 @@ import { Role } from 'src/rol/rol.enum';
 export class AuthController {
   constructor(private authService: AuthService, private userService: UsuarioService) { }
 
+  //login
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() signInDto: UsuarioDto) {
@@ -18,7 +19,7 @@ export class AuthController {
   }
 
 
-
+//acceso al perfil
   @Get('profile')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.User)

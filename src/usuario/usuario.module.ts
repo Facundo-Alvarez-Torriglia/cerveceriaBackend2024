@@ -6,9 +6,10 @@ import { Usuario } from './entities/usuario.entity';
 import { Reserva } from 'src/reservas/entities/Reserva.entity';
 import { Pedido } from 'src/pedido/entity/pedido.entity';
 import { PedidoService } from 'src/pedido/pedido.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reserva, Usuario, Pedido])],
+  imports: [TypeOrmModule.forFeature([Reserva, Usuario, Pedido]),AuthModule],
   controllers: [UsuarioController],
   providers: [UsuarioService],
 })

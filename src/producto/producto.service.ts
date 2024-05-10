@@ -88,7 +88,7 @@ export class ProductoService {
         // Busco el producto
             const productoExist: Producto = await this.getProductoById(id);
             // Si el producto esta borrado, lanzamos una excepcion
-            if (!productoExist.deleted) {
+            if (productoExist.deleted) {
                 throw new ConflictException('El producto ya fue borrado con anterioridad');
             }
         // Actualizamos la propiedad deleted
