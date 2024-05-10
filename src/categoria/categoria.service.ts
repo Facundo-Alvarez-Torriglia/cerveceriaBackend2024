@@ -9,9 +9,7 @@ export class CategoriaService {
     constructor(@InjectRepository(Categoria) private readonly categoriaRepository: Repository <Categoria>) {}
 
     async getCategorias(): Promise <Categoria[]> {
-        try {
-            console.log("estoy aqui");
-            
+        try {            
             const criterio : FindManyOptions = { relations: ['productos']};
             const categorias: Categoria[] = await this.categoriaRepository.find(criterio);
             if(categorias) return categorias;
@@ -44,7 +42,7 @@ export class CategoriaService {
             }
             const categoria: Categoria = await this.categoriaRepository.findOne(criterio);
             if(categoria) return categoria;
-            throw new NotFoundException(`No se encontre un categoria con el id ${id}`);
+            throw new NotFoundException(`No se encontro la categoria con el id ${id}`);
         } catch (error) {
             throw new HttpException({ status: HttpStatus.NOT_FOUND,
                 error: `Error al intentar leer el categoria de id ${id} en la base de datos; ${error}`},
