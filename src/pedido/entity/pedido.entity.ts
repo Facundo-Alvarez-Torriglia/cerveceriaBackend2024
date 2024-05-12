@@ -26,4 +26,11 @@ export class Pedido {
     @ManyToOne(() => MetodoPago, metodoPago => metodoPago.pedidos)
     @JoinColumn({ name: "idMetodoPago" })
     metodoPago: MetodoPago;
+
+    constructor(fecha:Date, detalle:string, usuario:Usuario, metodoPago:MetodoPago) {
+        this.fecha= fecha;
+        this.detalle=detalle;
+        this.usuario= usuario;
+        this.metodoPago=metodoPago;
+    }
 }
