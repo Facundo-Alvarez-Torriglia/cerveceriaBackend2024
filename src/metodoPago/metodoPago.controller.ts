@@ -41,7 +41,7 @@ export class MetodoPagoController {
     errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
   })) id: number, @Body() datos: MetodoPagoDto): Promise<MetodoPago> {
     const usuarioAutenticado = req.user;
-    if (datos.usuario === usuarioAutenticado.sub) {
+    if (datos.usuario.id === usuarioAutenticado.sub) {
       return this.metodoPagoService.update(id, datos);
     }
     throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
@@ -54,7 +54,7 @@ export class MetodoPagoController {
     errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
   })) id: number, @Body() datos: MetodoPagoDto): Promise<void> {
     const usuarioAutenticado = req.user;
-    if (datos.usuario === usuarioAutenticado.sub) {
+    if (datos.usuario.id === usuarioAutenticado.sub) {
       return await this.metodoPagoService.remove(id);
     }
   }

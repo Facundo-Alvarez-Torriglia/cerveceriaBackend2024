@@ -11,17 +11,33 @@ export class PedidoController {
     constructor(private readonly pedidoService: PedidoService) { }
 
     @Get()
+    @UseGuards(AuthGuard)
     @HttpCode(200)
-    async getPedidos(): Promise<Pedido[]> {
-        return await this.pedidoService.getPedidos();
+    async getPedidos(@Request() req: Request & {user:RequestLoginDto}): Promise<Pedido[]> {
+        const usuario: RequestLoginDto=req.user;
+        console.log(usuario.role);
+        if (usuario.role=='admin') {
+            return await this.pedidoService.getPedidos();
+        }
+        else {            
+            return await this.pedidoService.getPedidosUser(usuario.sub);
+        }
     }
 
     @Get(':id')
+    @UseGuards(AuthGuard)
     @HttpCode(200)
-    async getPedidoById(@Param('id', new ParseIntPipe({
+    async getPedidoById(@Request() req: Request & {user:RequestLoginDto},@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Pedido> {
-        return await this.pedidoService.getPedidoById(id);
+        const usuario: RequestLoginDto=req.user;
+        console.log(usuario.role);
+        if (usuario.role=='admin') {
+            return await this.pedidoService.getPedidoById(id);
+        }
+        else {            
+            return await this.pedidoService.getPedidoByIdUser(id,usuario.sub);
+        }
     }
 
     @Post()
@@ -30,7 +46,7 @@ export class PedidoController {
         // Obtener el usuario autenticado desde el objeto de solicitud
         
         const usuarioAutenticado = req.user;
-        if (datos.usuario === usuarioAutenticado.sub) {
+        if (datos.usuario.id === usuarioAutenticado.sub) {
             // Crear el pedido asociado con el usuario autenticado
             return await this.pedidoService.crearPedido(datos);
         }
@@ -44,7 +60,7 @@ export class PedidoController {
     })) id: number, @Body() datos: PedidoDto): Promise<Pedido> {
         const usuarioAutenticado = req.user;
         
-        if (datos.usuario === usuarioAutenticado.sub) {
+        if (datos.usuario.id === usuarioAutenticado.sub) {
             
             return await this.pedidoService.actualizarPedido(id, datos, Number(usuarioAutenticado.sub));
         }

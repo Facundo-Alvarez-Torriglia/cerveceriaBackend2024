@@ -46,7 +46,7 @@ export class ReservaController {
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: ReservaDto): Promise<Boolean> {
         const usuarioAutenticado = req.user;
-        if (datos.usuario === usuarioAutenticado.sub) {
+        if (datos.usuario.id === usuarioAutenticado.sub) {
             return await this.reservaService.SoftEliminarReserva(id);
         }
     }

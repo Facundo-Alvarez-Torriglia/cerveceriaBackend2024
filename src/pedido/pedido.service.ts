@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
@@ -24,6 +24,24 @@ export class PedidoService {
         }
     }
 
+    async getPedidosUser(usuarioLog:number): Promise<Pedido[]> {
+        try {
+            console.log(`usuario logueado: ${usuarioLog}`);
+            const criterio:FindManyOptions = {relations: ['usuario', 'pedidosProducto', 'metodoPago', 'pedidosProducto.producto'], 
+            where:{usuario: { 
+                id: usuarioLog 
+            }}}
+            const pedidos: Pedido[] = await this.pedidoRepository.find(criterio);
+            if (pedidos.length > 0) return pedidos;
+            throw new NotFoundException(`No hay pedidos registrados en la base de datos`);
+        } catch (error) {
+            throw new HttpException({ 
+                status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar leer los pedidos en la base de datos: ${error}`
+            }, HttpStatus.NOT_FOUND);
+        }
+    }
+
     async getPedidoById(id: number): Promise<Pedido> {
         try {
             const criterio: FindOneOptions = { relations: ['usuario','pedidosProducto', 'metodoPago', 'pedidosProducto.producto'],where: { id: id } };
@@ -38,14 +56,29 @@ export class PedidoService {
         }
     }
 
+    async getPedidoByIdUser(id: number, idUser:number): Promise<Pedido> {
+        try {
+            const criterio: FindOneOptions = { relations: ['usuario','pedidosProducto', 'metodoPago', 'pedidosProducto.producto'],where: { id: id } };
+            const pedido: Pedido = await this.pedidoRepository.findOne(criterio);
+            if (pedido){
+                if (pedido.usuario.id==idUser) return pedido;
+                throw new ConflictException(`El usuario logueado ${idUser} es distinto del usuario dueño del pedido`)
+            } 
+            throw new NotFoundException(`No se encontró un pedido con el id ${id}`);
+        } catch (error) {
+            throw new HttpException({ 
+                status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar leer el pedido de id ${id} en la base de datos: ${error}`
+            }, HttpStatus.NOT_FOUND);
+        }
+    }
+
     async crearPedido(datos: PedidoDto): Promise<Pedido> {
         try {
             // Convertir PedidoDto a un objeto parcial de Pedido
-            const nuevoPedido: Partial<Pedido> = datos;
-
+            const nuevoPedido: Pedido = new Pedido(datos.fecha,datos.detalle, datos.usuario, datos.metodoPago);
             // Crear el pedido en la base de datos
             const pedidoGuardado: Pedido = await this.pedidoRepository.save(nuevoPedido);
-
             // Devolver el pedido guardado
             return pedidoGuardado;
         } catch (error) {
@@ -63,7 +96,11 @@ export class PedidoService {
         try {
             const pedidoActualizar: Pedido = await this.getPedidoById(id);
             if (pedidoActualizar && pedidoActualizar.usuario.id==usuario) {
-                Object.assign(pedidoActualizar, datos);
+                //Object.assign(pedidoActualizar, datos);
+                pedidoActualizar.fecha=datos.fecha;
+                pedidoActualizar.detalle=datos.detalle;
+                pedidoActualizar.usuario=datos.usuario;
+                pedidoActualizar.metodoPago=datos.metodoPago;
                 const pedidoActualizado: Pedido = await this.pedidoRepository.save(pedidoActualizar);
                 return pedidoActualizado;
             } else {                
