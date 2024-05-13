@@ -22,4 +22,10 @@ export class PedidoProducto {
     @ManyToOne(()=> Producto, producto=> producto.pedidoProductos)
     @JoinColumn({ name:"idProducto" })
     producto:Producto;
+
+    constructor(cantidad:number, pedido:Pedido, producto:Producto) {
+        this.cantidad=cantidad;
+        this.producto=producto;
+        this.pedido=pedido;
+    }
 }
