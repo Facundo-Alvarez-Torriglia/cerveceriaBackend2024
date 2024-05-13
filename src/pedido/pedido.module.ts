@@ -9,6 +9,7 @@ import { MetodoPago } from 'src/metodoPago/entities/MetodoPago.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Pedido, Usuario, MetodoPago])],
   controllers: [PedidoController],
-  providers: [PedidoService]
+  providers: [PedidoService],
+  exports: [PedidoService]
 })
 export class PedidoModule {}
