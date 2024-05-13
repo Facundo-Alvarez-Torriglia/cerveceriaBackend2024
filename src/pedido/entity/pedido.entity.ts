@@ -16,6 +16,9 @@ export class Pedido {
     @Column({ type: String, nullable: false })
     detalle: string;
 
+    @Column({ type: Boolean, nullable: false, default: false })
+    deleted: boolean;
+
     @ManyToOne(()=>Usuario, usuario => usuario.pedidos)
     @JoinColumn({name: "idUsuario"})
     usuario:Usuario;

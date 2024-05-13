@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request, ConflictException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request, ConflictException, Patch } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RequestLoginDto } from './dto/request-login-dto.dto';
+import { AdminGuard } from 'src/auth/guard/admin.guard';
 
 
 @Controller('pedido')
@@ -46,7 +47,7 @@ export class PedidoController {
         // Obtener el usuario autenticado desde el objeto de solicitud
         
         const usuarioAutenticado = req.user;
-        if (datos.usuario.id === usuarioAutenticado.sub) {
+        if (usuarioAutenticado.role=== 'admin' || Number(datos.usuario)=== Number(usuarioAutenticado.sub)) {
             // Crear el pedido asociado con el usuario autenticado
             return await this.pedidoService.crearPedido(datos);
         }
@@ -59,19 +60,39 @@ export class PedidoController {
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() datos: PedidoDto): Promise<Pedido> {
         const usuarioAutenticado = req.user;
-        
-        if (datos.usuario.id === usuarioAutenticado.sub) {
-            
+        if (Number(datos.usuario) === Number(usuarioAutenticado.sub)&& usuarioAutenticado.role==='user') { 
             return await this.pedidoService.actualizarPedido(id, datos, Number(usuarioAutenticado.sub));
+        } else {
+            if (usuarioAutenticado.role==='admin') {
+                return await this.pedidoService.actualizarPedidoAdmin(id, datos);  
+            }
+            throw new ConflictException(`El usuario logueado ${usuarioAutenticado.sub} es distinto al usuario del pedido.`)
         }
-        throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado.`)
     }
 
     @Delete(':id')
-    async eliminarPedido(@Param('id', new ParseIntPipe({
+    @UseGuards(AuthGuard)
+    async eliminarPedido(@Request() req: Request & {user:RequestLoginDto},@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
-        return await this.pedidoService.eliminarPedido(id);
+        const usuarioAutenticado = req.user;
+        if (usuarioAutenticado.role==='user') { 
+            return await this.pedidoService.softEliminarPedidoUser(id, usuarioAutenticado.sub);
+        } else {
+            if (usuarioAutenticado.role==='admin') {
+                return await this.pedidoService.softEliminarPedido(id);
+            }
+            throw new ConflictException(`El usuario logueado ${usuarioAutenticado.sub} es distinto al usuario del pedido.`)
+        }
+        
+    }
+
+    @Patch(':id')
+    @UseGuards(AdminGuard)
+    async reactivarPedido(@Param('id', new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+    })) id: number): Promise<Boolean> {
+        return await this.pedidoService.softReactvarPedido(id);
     }
 }
 

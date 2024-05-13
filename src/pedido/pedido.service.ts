@@ -1,5 +1,5 @@
 import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
+import { Repository, FindOneOptions, FindManyOptions, UpdateResult } from 'typeorm';
 import { PedidoDto } from './dto/pedido';
 import { Pedido } from './entity/pedido.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,7 +30,7 @@ export class PedidoService {
             const criterio:FindManyOptions = {relations: ['usuario', 'pedidosProducto', 'metodoPago', 'pedidosProducto.producto'], 
             where:{usuario: { 
                 id: usuarioLog 
-            }}}
+            }, deleted:false}}
             const pedidos: Pedido[] = await this.pedidoRepository.find(criterio);
             if (pedidos.length > 0) return pedidos;
             throw new NotFoundException(`No hay pedidos registrados en la base de datos`);
@@ -58,7 +58,11 @@ export class PedidoService {
 
     async getPedidoByIdUser(id: number, idUser:number): Promise<Pedido> {
         try {
-            const criterio: FindOneOptions = { relations: ['usuario','pedidosProducto', 'metodoPago', 'pedidosProducto.producto'],where: { id: id } };
+            const criterio: FindOneOptions = { relations: ['usuario','pedidosProducto', 'metodoPago', 'pedidosProducto.producto'],
+            where: { 
+                id: id, 
+                deleted:false 
+            } };
             const pedido: Pedido = await this.pedidoRepository.findOne(criterio);
             if (pedido){
                 if (pedido.usuario.id==idUser) return pedido;
@@ -114,6 +118,41 @@ export class PedidoService {
         }
     }
 
+    async actualizarPedidoAdmin(id: number, datos: PedidoDto): Promise<Pedido> {
+        try {
+            const pedidoActualizar: Pedido = await this.getPedidoById(id);
+            if (pedidoActualizar) {
+                //Object.assign(pedidoActualizar, datos);
+                pedidoActualizar.fecha=datos.fecha;
+                pedidoActualizar.detalle=datos.detalle;
+                pedidoActualizar.usuario=datos.usuario;
+                pedidoActualizar.metodoPago=datos.metodoPago;
+                const pedidoActualizado: Pedido = await this.pedidoRepository.save(pedidoActualizar);
+                return pedidoActualizado;
+            } 
+        } catch (error) {
+            throw new HttpException({ 
+                status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar actualizar el pedido de id ${id} en la base de datos: ${error}`
+            }, HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    async eliminarPedidoUsser(id: number, idUser:number): Promise<boolean> {
+        try {
+            const pedidoEliminar: Pedido = await this.getPedidoByIdUser(id, idUser);
+            if (pedidoEliminar) {
+                await this.pedidoRepository.remove(pedidoEliminar);
+                return true;
+            }
+        } catch (error) {
+            throw new HttpException({ 
+                status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar eliminar el pedido de id ${id} en la base de datos: ${error}`
+            }, HttpStatus.NOT_FOUND);
+        }
+    }
+
     async eliminarPedido(id: number): Promise<boolean> {
         try {
             const pedidoEliminar: Pedido = await this.getPedidoById(id);
@@ -128,6 +167,55 @@ export class PedidoService {
             }, HttpStatus.NOT_FOUND);
         }
     }
+
+    async softEliminarPedido(id:number): Promise <Boolean> {
+        // Busco el producto
+        const pedidoExists: Pedido = await this.getPedidoById(id);   
+        // Si el producto esta borrado, lanzamos una excepcion
+        if(pedidoExists.deleted){
+            throw new ConflictException('El pedido ya fue borrado con anterioridad');
+        }
+        // Actualizamos la propiedad deleted
+    const rows: UpdateResult = await this.pedidoRepository.update(
+        { id:id },
+        { deleted: true }
+    );
+    // Si afecta a un registro, devolvemos true
+    return rows.affected == 1;
+}
+
+async softEliminarPedidoUser(id:number, idUser:number): Promise <Boolean> {
+    // Busco el producto
+    const pedidoExists: Pedido = await this.getPedidoByIdUser(id, idUser);
+    // Si el producto esta borrado, lanzamos una excepcion
+    if(pedidoExists.deleted){
+        throw new ConflictException('El pedido ya fue borrado con anterioridad');
+    }
+    // Actualizamos la propiedad deleted
+const rows: UpdateResult = await this.pedidoRepository.update(
+    { id:id },
+    { deleted: true }
+);
+// Si afecta a un registro, devolvemos true
+return rows.affected == 1;
+}
+
+async softReactvarPedido(id:number): Promise <Boolean> {
+    // Busco el producto
+    const pedidoExists: Pedido = await this.getPedidoById(id);
+    // Si el producto esta borrado, lanzamos una excepcion
+    if(!pedidoExists.deleted){
+        throw new ConflictException('El pedido ya fue activado con anterioridad');
+    }
+    // Actualizamos la propiedad deleted
+const rows: UpdateResult = await this.pedidoRepository.update(
+    { id:id },
+    { deleted: false }
+);
+// Si afecta a un registro, devolvemos true
+return rows.affected == 1;
+}
+
 }
 
 
