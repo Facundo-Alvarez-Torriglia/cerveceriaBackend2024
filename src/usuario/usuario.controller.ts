@@ -1,4 +1,4 @@
-import { Request,Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, HttpCode, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Request,Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, HttpCode, HttpException, HttpStatus, UseGuards, NotFoundException } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { UsuarioDto } from './dto/create-usuario.dto';
 
@@ -6,6 +6,7 @@ import { Usuario } from './entities/usuario.entity';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { UsuarioGuard } from 'src/auth/guard/usuario.guard';
 import { RequestLoginDto } from 'src/pedido/dto/request-login-dto.dto';
+import { AdminGuard } from 'src/auth/guard/admin.guard';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -18,28 +19,23 @@ export class UsuarioController {
      }
 
   @Get()
-   @UseGuards(UsuarioGuard)  
+   @UseGuards(AdminGuard)  
   @HttpCode(200)
   async findAllUsers(@Request() req: Request & {user:RequestLoginDto}): Promise<Usuario[]> {
-    const usuario = req.user;
-    if(usuario && usuario.role == 'admin'){
-      return await this.usuarioService.findAllUser();
-    } else {
-      return await this.usuarioService.getUsuarioActivo();
-    }
-  
+    return await this.usuarioService.findAllUser();
+    
   }
 
  
   @Get(':id')
-  @UseGuards(UsuarioGuard)  
+  @UseGuards(AuthGuard)  
   @HttpCode(200)
   async findOneUser(@Request() req: Request & {user:RequestLoginDto},@Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number): Promise<Usuario> {
    const usuario = req.user;
-   if(usuario && usuario.role == 'admin'){
+   if(usuario && usuario.role == 'admin'|| usuario && id === usuario.sub){
      return await this.usuarioService.findOne(id);
    } else {
-     return await this.usuarioService.getUsuarioByIdActivo(id);
+     throw new NotFoundException("Acción prohibida.Solo puedes acceder a tus datos")
    }
    
   } 
