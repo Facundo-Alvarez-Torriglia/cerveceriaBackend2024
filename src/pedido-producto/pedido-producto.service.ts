@@ -1,6 +1,6 @@
 import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, Repository, UpdateResult } from 'typeorm';
 import { PedidoProducto } from './entity/pedido-producto';
 import { pedidoProductoDto } from './dto/pedido-producto';
 import { PedidoService } from 'src/pedido/pedido.service';
@@ -155,15 +155,62 @@ export class PedidoProductoService {
         try {
             let pedidoProductoActualizar: PedidoProducto = await this.getPedidoProductoById(id);
             if (pedidoProductoActualizar) {
-                pedidoProductoActualizar = Object.assign(pedidoProductoActualizar, pedidoDto);
+                pedidoProductoActualizar.cantidad = pedidoDto.cantidad;
+                pedidoProductoActualizar.pedido= pedidoDto.pedido;
+                pedidoProductoActualizar.producto= pedidoDto.producto;
                 await this.pedidoProductoRepository.save(pedidoProductoActualizar);
                 return pedidoProductoActualizar;
             }
         } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: `Error al intentar actualizar el pedido de producto con id ${id}: ${error}`,
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
+            if (error instanceof HttpException) {
+                // Si el error es de tipo HttpException, simplemente relanzamos el error
+                throw error;
+            } else if (error instanceof ConflictException) {
+                // Si el error es de tipo ConflictException, lanzamos una excepción HTTP con el mismo mensaje
+                throw new HttpException({
+                    status: HttpStatus.CONFLICT,
+                    error: error.message,
+                }, HttpStatus.CONFLICT);
+            } else {
+                // En caso de cualquier otro error, lanzamos una excepción HTTP genérica
+                throw new HttpException({
+                    status: HttpStatus.INTERNAL_SERVER_ERROR,
+                    error: `Error al intentar crear el pedido de producto: ${error}`,
+                }, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    async updatePedidoProductoUser(id: number, pedidoDto: pedidoProductoDto, idUser:number): Promise<PedidoProducto> {
+        try {
+            const pedido: Pedido= await this.pedidoServicio.getPedidoByIdUser(Number(pedidoDto.pedido), idUser);
+            
+            let pedidoProductoActualizar: PedidoProducto = await this.getPedidoProductoByIdUser(id, idUser);
+            
+            if (pedidoProductoActualizar) {
+                pedidoProductoActualizar.cantidad = pedidoDto.cantidad;
+                pedidoProductoActualizar.pedido= pedidoDto.pedido;
+                pedidoProductoActualizar.producto= pedidoDto.producto;
+                await this.pedidoProductoRepository.save(pedidoProductoActualizar);
+                return pedidoProductoActualizar;
+            }
+        } catch (error) {
+            if (error instanceof HttpException) {
+                // Si el error es de tipo HttpException, simplemente relanzamos el error
+                throw error;
+            } else if (error instanceof ConflictException) {
+                // Si el error es de tipo ConflictException, lanzamos una excepción HTTP con el mismo mensaje
+                throw new HttpException({
+                    status: HttpStatus.CONFLICT,
+                    error: error.message,
+                }, HttpStatus.CONFLICT);
+            } else {
+                // En caso de cualquier otro error, lanzamos una excepción HTTP genérica
+                throw new HttpException({
+                    status: HttpStatus.INTERNAL_SERVER_ERROR,
+                    error: `Error al intentar crear el pedido de producto: ${error}`,
+                }, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
     }
 
@@ -181,4 +228,54 @@ export class PedidoProductoService {
             }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async softEliminarPedidoProducto(id:number): Promise <Boolean> {
+        // Busco el producto
+        const pedidoExists: PedidoProducto = await this.getPedidoProductoById(id);   
+        // Si el producto esta borrado, lanzamos una excepcion
+        if(pedidoExists.deleted){
+            throw new ConflictException('El pedido ya fue borrado con anterioridad');
+        }
+        // Actualizamos la propiedad deleted
+    const rows: UpdateResult = await this.pedidoProductoRepository.update(
+        { id:id },
+        { deleted: true }
+    );
+    // Si afecta a un registro, devolvemos true
+    return rows.affected == 1;
+}
+
+async softEliminarPedidoProductoUser(id:number, idUser:number): Promise <Boolean> {
+    // Busco el producto
+    const pedidoExists: PedidoProducto = await this.getPedidoProductoByIdUser(id, idUser);
+    // Si el producto esta borrado, lanzamos una excepcion
+    if(pedidoExists.deleted){
+        throw new ConflictException('El pedido ya fue borrado con anterioridad');
+    }
+    // Actualizamos la propiedad deleted
+const rows: UpdateResult = await this.pedidoProductoRepository.update(
+    { id:id },
+    { deleted: true }
+);
+// Si afecta a un registro, devolvemos true
+return rows.affected == 1;
+}
+
+async softReactvarPedidoProducto(id:number): Promise <Boolean> {
+    // Busco el producto
+    const pedidoExists: PedidoProducto = await this.getPedidoProductoById(id);
+    // Si el producto esta borrado, lanzamos una excepcion
+    if(!pedidoExists.deleted){
+        throw new ConflictException('El pedido ya fue activado con anterioridad');
+    }
+    // Actualizamos la propiedad deleted
+const rows: UpdateResult = await this.pedidoProductoRepository.update(
+    { id:id },
+    { deleted: false }
+);
+// Si afecta a un registro, devolvemos true
+return rows.affected == 1;
+}
+
+
 }

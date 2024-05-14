@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Request, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Request, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Patch } from '@nestjs/common';
 import { PedidoProductoService } from './pedido-producto.service';
 import { PedidoProducto } from './entity/pedido-producto';
 import { pedidoProductoDto } from './dto/pedido-producto';
@@ -37,7 +37,6 @@ export class PedidoProductoController {
     async createPedidoProducto(@Request() req: Request & {user:RequestLoginDto},@Body() pedidoDto: pedidoProductoDto): Promise<PedidoProducto> {
         const usuarioLog = req.user;
         console.log(req.user.sub);
-        
         if (usuarioLog.role=== 'admin') {
             return await this.pedidoProductoService.createPedidoProducto(pedidoDto);  
         } else {
@@ -48,17 +47,35 @@ export class PedidoProductoController {
 
     @Put(':id')
     @UseGuards(AuthGuard)
-    async updatePedidoProducto(@Param('id', new ParseIntPipe({
+    async updatePedidoProducto(@Request() req: Request & {user:RequestLoginDto},@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number, @Body() pedidoDto: pedidoProductoDto): Promise<PedidoProducto> {
-        return await this.pedidoProductoService.updatePedidoProducto(id, pedidoDto);
+        const usuarioLog = req.user;   
+        if (usuarioLog.role=== 'admin') {
+            return await this.pedidoProductoService.updatePedidoProducto(id, pedidoDto);
+        } else {
+            return await this.pedidoProductoService.updatePedidoProductoUser(id, pedidoDto,usuarioLog.sub);
+        }
     }
 
     @Delete(':id')
     @UseGuards(AuthGuard)
-    async deletePedidoProducto(@Param('id', new ParseIntPipe({
+    async deletePedidoProducto(@Request() req: Request & {user:RequestLoginDto},@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
-        return await this.pedidoProductoService.deletePedidoProducto(id);
+        const usuarioLog = req.user;        
+        if (usuarioLog.role=== 'admin') {
+            return await this.pedidoProductoService.softEliminarPedidoProducto(id);
+        } else {
+            return await this.pedidoProductoService.softEliminarPedidoProductoUser(id, usuarioLog.sub);
+        }        
+    }
+
+    @Patch(':id')
+    @UseGuards(AdminGuard)
+    async reactivarPedidoProducto(@Param('id', new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+    })) id: number): Promise <Boolean> {
+        return await this.pedidoProductoService.softReactvarPedidoProducto(id);
     }
 }
