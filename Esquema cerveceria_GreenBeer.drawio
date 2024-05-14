@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Página-1" id="uT9yLsgqjFHyx92FWntv">
-        <mxGraphModel dx="664" dy="607" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="904" dy="607" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -27,12 +27,6 @@
                 </mxCell>
                 <mxCell id="4UzkKI2sTNi-MiWqPZaZ-9" value="id: number&lt;div style=&quot;font-size: 12px;&quot;&gt;fechaHora: dateTime&lt;/div&gt;&lt;div style=&quot;font-size: 12px;&quot;&gt;cantidad: number&lt;/div&gt;&lt;div style=&quot;font-size: 12px;&quot;&gt;idUsuario: FK usuario&lt;/div&gt;&lt;div style=&quot;font-size: 12px;&quot;&gt;idMetodoPago: FK MetodoPago&lt;/div&gt;&lt;div style=&quot;font-size: 12px;&quot;&gt;mesa: number&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;labelBorderColor=none;labelBackgroundColor=none;fontSize=12;fontColor=#FFFFFF;rounded=1;" parent="jhApCoZ5-Amo9dIsdA1J-6" vertex="1">
                     <mxGeometry x="10" y="30" width="190" height="100" as="geometry"/>
-                </mxCell>
-                <mxCell id="jhApCoZ5-Amo9dIsdA1J-22" value="Rol" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;labelBorderColor=none;textShadow=0;strokeWidth=2;fontColor=#ffffff;rounded=1;" parent="1" vertex="1">
-                    <mxGeometry x="590" y="80" width="200" height="200" as="geometry"/>
-                </mxCell>
-                <mxCell id="4UzkKI2sTNi-MiWqPZaZ-11" value="id: number&lt;div&gt;rol: string&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;spacing=3;spacingTop=0;fontColor=#FFFFFF;rounded=1;" parent="jhApCoZ5-Amo9dIsdA1J-22" vertex="1">
-                    <mxGeometry x="10" y="30" width="80" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="jhApCoZ5-Amo9dIsdA1J-23" value="Pedido-Producto" style="swimlane;whiteSpace=wrap;html=1;fillColor=#60a917;strokeColor=#2D7600;strokeWidth=2;fontColor=#ffffff;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="590" y="330" width="200" height="200" as="geometry">
@@ -74,12 +68,6 @@
                     <mxGeometry width="100" height="100" relative="1" as="geometry">
                         <mxPoint x="350" y="440" as="sourcePoint"/>
                         <mxPoint x="280" y="440" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="jhApCoZ5-Amo9dIsdA1J-36" value="" style="fontSize=12;html=1;endArrow=ERzeroToMany;startArrow=ERmandOne;rounded=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontColor=#FFFFFF;" parent="1" source="jhApCoZ5-Amo9dIsdA1J-22" target="jhApCoZ5-Amo9dIsdA1J-1" edge="1">
-                    <mxGeometry width="100" height="100" relative="1" as="geometry">
-                        <mxPoint x="350" y="190" as="sourcePoint"/>
-                        <mxPoint x="280" y="190" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="jhApCoZ5-Amo9dIsdA1J-37" value="Esquema entidad-relacion Cerveceria Green Beer" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=5;fontSize=13;rounded=1;" parent="1" vertex="1">
