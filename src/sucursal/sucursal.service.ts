@@ -17,8 +17,8 @@ export class SucursalService {
      }
   try{
   let sucursal : Sucursal;
-  if(datos.nombre && datos.direccion && datos.telefono && datos.imagen) {
-    sucursal = new Sucursal(datos.nombre, datos.direccion,datos.telefono, datos.imagen)
+  if(datos.nombre && datos.direccion && datos.telefono && datos.email && datos.instagram && datos.facebook && datos.imagen ) {
+    sucursal = new Sucursal(datos.nombre, datos.direccion,datos.telefono,datos.email,datos.instagram,datos.facebook, datos.imagen)
     sucursal = await this.sucursalRepository.save(sucursal);
     return sucursal;
   } else {
@@ -98,6 +98,9 @@ async  findOneSucursalActiva(id: number):Promise<Sucursal> {
         updateSucursal.nombre = datos.nombre;
         updateSucursal.direccion = datos.direccion;
         updateSucursal.telefono = datos.telefono;
+         updateSucursal.email = datos.email; 
+         updateSucursal.instagram = datos.instagram;
+        updateSucursal.facebook = datos.facebook;
         updateSucursal.imagen = datos.imagen;
         updateSucursal = await this.sucursalRepository.save(updateSucursal);
         return updateSucursal;

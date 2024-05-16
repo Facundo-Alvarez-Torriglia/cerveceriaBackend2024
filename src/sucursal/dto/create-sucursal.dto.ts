@@ -12,6 +12,15 @@ direccion:string;
 telefono:string;
 
 @IsString()
+email: string;
+
+@IsString()
+instagram:string;
+
+@IsString()
+facebook: string;
+
+@IsString()
 imagen:string
 
 }
