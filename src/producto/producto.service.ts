@@ -8,7 +8,7 @@ import { DtoProducto } from './dto/DtoProducto.dto';
 export class ProductoService {
     constructor(@InjectRepository(Producto) private readonly productoRepository: Repository <Producto>) {}
 
-    async getProductos(): Promise <Producto[]> {
+    async getProductosAdmin(): Promise <Producto[]> {
         try {
             const criterio : FindManyOptions = { relations: ['categoria', 'tipo', 'pedidoProductos', 'pedidoProductos.pedido.usuario']};
             const productos: Producto[] = await this.productoRepository.find(criterio);
@@ -21,11 +21,46 @@ export class ProductoService {
         }
     }
 
-    async getProductoById(id:number): Promise <Producto>{
+    async getProductos(): Promise <Producto[]> {
+        try {
+            const criterio : FindManyOptions = { 
+                relations: ['categoria', 'tipo'],
+                where: { deleted: false}
+            };
+            const productos: Producto[] = await this.productoRepository.find(criterio);
+            if(productos) return productos;
+            throw new NotFoundException(`No hay productos registrados en la base de datos`);
+        } catch (error) {
+            throw new HttpException({ status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar leer los productos en la base de datos; ${error}`},
+                HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async getProductoByIdAdmin(id:number): Promise <Producto>{
         try {
             const criterio: FindOneOptions = { 
                 relations: ['categoria', 'tipo','pedidoProductos', 'pedidoProductos.pedido.usuario'],
                 where: { idProducto: id }
+            }
+            const producto: Producto = await this.productoRepository.findOne(criterio);
+            if(producto) return producto;
+            throw new NotFoundException(`No se encontre un producto con el id ${id}`);
+        } catch (error) {
+            throw new HttpException({ status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar leer el producto de id ${id} en la base de datos; ${error}`},
+                HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async getProductoById(id:number): Promise <Producto>{
+        try {
+            const criterio: FindOneOptions = { 
+                relations: ['categoria', 'tipo'],
+                where: { 
+                    idProducto: id,
+                    deleted: false
+                 }
             }
             const producto: Producto = await this.productoRepository.findOne(criterio);
             if(producto) return producto;

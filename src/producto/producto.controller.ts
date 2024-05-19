@@ -6,6 +6,7 @@ import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { AdminGuard } from 'src/auth/guard/admin.guard';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RequestLoginDto } from 'src/pedido/dto/request-login-dto.dto';
+import { UsuarioGuard } from 'src/auth/guard/usuario.guard';
 
 @Controller('producto')
 export class ProductoController {
@@ -13,16 +14,28 @@ export class ProductoController {
 
     @Get()
     @HttpCode(200)
-    async getProductos(): Promise<Producto[]> {
-        return await this.productoService.getProductos();
+    @UseGuards(UsuarioGuard)
+    async getProductos(@Request() req: Request & {user:RequestLoginDto}): Promise<Producto[]> {
+        const usuario=req.user;  
+        if (usuario && usuario.role=="admin"){
+            return await this.productoService.getProductosAdmin()
+        } else {
+            return await this.productoService.getProductos();
+        }
     }
 
     @Get(':id')
     @HttpCode(200)
-    async getProductoById(@Param('id', new ParseIntPipe({
+    @UseGuards(UsuarioGuard)
+    async getProductoById(@Request() req: Request & {user:RequestLoginDto}, @Param('id', new ParseIntPipe({
             errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
         })) id: number): Promise<Producto> {
-            return await this.productoService.getProductoById(id);
+            const usuario=req.user;  
+            if (usuario && usuario.role=="admin"){
+                return await this.productoService.getProductoByIdAdmin(id);
+            } else {
+                return await this.productoService.getProductoById(id);
+            }
         }
 
     @Post()
