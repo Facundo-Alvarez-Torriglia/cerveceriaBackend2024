@@ -63,7 +63,6 @@ export class ProductoService {
 
    async actualizarProducto(id:number, datos:DtoProducto): Promise <Producto> {
         try {
-            await this.comprobacionProducto(datos);
             let productoActualizar: Producto = await this.getProductoById(id);
             if (productoActualizar) {
                 productoActualizar.titulo=datos.titulo;

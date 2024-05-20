@@ -1,7 +1,7 @@
 import { Module, Res } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import { FastifyLoader, ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { TipoModule } from './tipo/tipo.module';
@@ -37,7 +37,7 @@ import { PedidoProductoModule } from './pedido-producto/pedido-producto.module';
     database: 'cerveceria',
     ssl: true,
     entities: [Sucursal,Usuario,Tipo,Reserva,Producto,MetodoPago,Categoria, Pedido, PedidoProducto], //__dirname + "/entity/*{.js,.ts}"
-    synchronize: true,
+    synchronize: false,
   }),
     CategoriaModule,
     ProductoModule,
