@@ -3,9 +3,9 @@ import { AuthGuard } from './guard/auth.guard';
 import { RolesGuard } from './guard/roles.guard';
 import { AuthService } from './auth.service';
 import { UsuarioService } from 'src/usuario/usuario.service';
-import { UsuarioDto } from 'src/usuario/dto/create-usuario.dto';
 import { Roles } from 'src/rol/roles.decorador';
 import { Role } from 'src/rol/rol.enum';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +14,7 @@ export class AuthController {
   //login
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: UsuarioDto) {
+  signIn(@Body() signInDto: LoginDto) {
     return this.authService.signIn(signInDto.email, signInDto.password, signInDto.role);
   }
 
