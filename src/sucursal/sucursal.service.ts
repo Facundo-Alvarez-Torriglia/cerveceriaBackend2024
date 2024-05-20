@@ -104,7 +104,9 @@ async  findOneSucursalActiva(id: number):Promise<Sucursal> {
         updateSucursal.imagen = datos.imagen;
         updateSucursal = await this.sucursalRepository.save(updateSucursal);
         return updateSucursal;
-      } 
+      }  else {
+        throw new HttpException('Sucursal no encontrada',HttpStatus.NOT_FOUND)
+      }
     } catch (error) {
       throw new HttpException({ status: HttpStatus.NOT_FOUND,
           error: `Error al intentar actualizar la sucursal de id: ${id} con el nombre ${datos.nombre} en la base de datos; ${error}`},
