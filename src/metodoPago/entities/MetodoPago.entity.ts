@@ -20,6 +20,6 @@ export class MetodoPago {
     reservas: Reserva[];
 
     @OneToMany(() => Pedido, pedido => pedido.metodoPago)
-    pedidos: Reserva[];
+    pedidos: Pedido[];
   usuario: any;
 }
