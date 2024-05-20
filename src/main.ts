@@ -8,7 +8,7 @@ async function bootstrap() {
   app.enableCors({
     origin:"*"
   })
-  app.useGlobalPipes(new ValidationPipe({whitelist:true}))
+   /* app.useGlobalPipes(new ValidationPipe({whitelist:true}))  */
   await app.listen(3000);
 }
 bootstrap();

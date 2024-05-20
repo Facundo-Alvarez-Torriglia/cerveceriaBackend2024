@@ -27,8 +27,8 @@ import { PedidoProductoModule } from './pedido-producto/pedido-producto.module';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'app') }),
-    TypeOrmModule.forRoot({
+/*     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'app') }),
+ */    TypeOrmModule.forRoot({
     type: 'cockroachdb',
     host: 'rushed-tenrec-14585.7tt.aws-us-east-1.cockroachlabs.cloud',
     port: 26257,
