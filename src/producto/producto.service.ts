@@ -98,7 +98,7 @@ export class ProductoService {
 
    async actualizarProducto(id:number, datos:DtoProducto): Promise <Producto> {
         try {
-            let productoActualizar: Producto = await this.getProductoById(id);
+            let productoActualizar: Producto = await this.getProductoByIdAdmin(id);
             if (productoActualizar) {
                 productoActualizar.titulo=datos.titulo;
                 productoActualizar.img=datos.img;
@@ -112,15 +112,32 @@ export class ProductoService {
                 return productoActualizar;
             }
         } catch (error) {
+            if (error instanceof HttpException) {
+                // Si el error es de tipo HttpException, simplemente relanzamos el error
+                throw error;
+            } else if (error instanceof ConflictException) {
+                // Si el error es de tipo ConflictException, lanzamos una excepción HTTP con el mismo mensaje
+                throw new HttpException({
+                    status: HttpStatus.CONFLICT,
+                    error: error.message,
+                }, HttpStatus.CONFLICT);
+            } else {
+                // En caso de cualquier otro error, lanzamos una excepción HTTP genérica
+                throw new HttpException({
+                    status: HttpStatus.INTERNAL_SERVER_ERROR,
+                    error: `Error al intentar actualizar el producto de ${id} con el nombre ${datos.titulo} en la base de datos; ${error}`,
+                }, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }/*catch (error) {
             throw new HttpException({ status: HttpStatus.NOT_FOUND,
                 error: `Error al intentar actualizar el producto de ${id} con el nombre ${datos.titulo} en la base de datos; ${error}`},
                 HttpStatus.NOT_FOUND);
-        }
+        }*/
     }
 
     async softEliminarProducto(id:number): Promise <Boolean> {
         // Busco el producto
-            const productoExist: Producto = await this.getProductoById(id);
+            const productoExist: Producto = await this.getProductoByIdAdmin(id);
             // Si el producto esta borrado, lanzamos una excepcion
             if (productoExist.deleted) {
                 throw new ConflictException('El producto ya fue borrado con anterioridad');
@@ -136,7 +153,7 @@ export class ProductoService {
 
     async softReactivarProducto(id:number): Promise <Boolean> {
         // Busco el producto
-        const productoExists: Producto = await this.getProductoById(id);
+        const productoExists: Producto = await this.getProductoByIdAdmin(id);
         // Si el producto esta borrado, lanzamos una excepcion
         if(!productoExists.deleted){
             throw new ConflictException('El producto ya fue activado con anterioridad');
