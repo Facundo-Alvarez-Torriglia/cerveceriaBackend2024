@@ -11,7 +11,9 @@ nombre:string
 @Column({nullable:true})
 direccion: string
 
-@Column()
+@Column({
+    nullable:true
+})
 telefono:string
 
 @Column({nullable:true})

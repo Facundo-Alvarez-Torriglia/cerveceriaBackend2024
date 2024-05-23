@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, HttpStatus, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UsuarioDto } from './dto/create-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
@@ -75,13 +75,26 @@ export class UsuarioService {
   //obtiene un usuario según el email ingresado. método utilizado para el login
   public async findOneUser(email: string): Promise<Usuario> {
     try {
-      let criterio: FindOneOptions = { relations: ['pedidos', 'reservas'], where: { email: email } };
+      let criterio: FindOneOptions = { where: { email: email } };
       const user = await this.usuarioRepository.findOne(criterio);
       if (user) return user;
       throw new NotFoundException(`Es usuario al cual hace referencia el id ${email} no se encuentra en la base de datos. Verifique los campos ingresados e intente nuevamente`);
     } catch (error) {
-      throw new HttpException({ status: HttpStatus.NOT_FOUND, error: `Se produjo un error al intentar obtener el usuario con id ${email}. Compruebe los datos ingresados e intente nuevamente` },
-        HttpStatus.NOT_FOUND);
+      if (error instanceof NotFoundException) {
+        // Si el error es NotFoundException, simplemente lo relanzamos
+        throw error;
+      } else if (error.name === 'QueryFailedError') {
+        // Manejar errores específicos de TypeORM
+        throw new HttpException(
+          { status: HttpStatus.INTERNAL_SERVER_ERROR, error: `Error en la consulta a la base de datos. Detalles: ${error.message}` },
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      } else {
+        // Manejar cualquier otro tipo de error
+        throw new InternalServerErrorException(
+          `Se produjo un error inesperado al intentar obtener el usuario con email ${email}. Compruebe los datos ingresados e intente nuevamente. Detalles: ${error.message}`
+        );
+      }
     }
   }
 

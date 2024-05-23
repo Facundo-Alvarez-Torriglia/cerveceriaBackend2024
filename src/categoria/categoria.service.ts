@@ -21,9 +21,31 @@ export class CategoriaService {
         }
     }
 
+    async getCategoriasActivas(): Promise<Categoria[]> {
+        try {
+            const categorias: Categoria[] = await this.categoriaRepository.createQueryBuilder('categoria')
+                .leftJoinAndSelect('categoria.productos', 'producto', 'producto.deleted = false')
+                .where('categoria.deleted = false')
+                .getMany();
+            
+            if (categorias.length > 0) {
+                return categorias;
+            }
+    
+            throw new NotFoundException(`No hay categorias registrados en la base de datos`);
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.NOT_FOUND,
+                error: `Error al intentar leer los categorias en la base de datos; ${error.message}`
+            }, HttpStatus.NOT_FOUND);
+        }
+    }
+/*
     async getCategoriasActivas(): Promise <Categoria[]> {
         try {
-            const criterio : FindManyOptions = { relations: ['productos'], where:{deleted:false}};
+            const criterio : FindManyOptions = { 
+                relations: ['productos.deleted==false'],
+                where:{deleted:false}};
             const categorias: Categoria[] = await this.categoriaRepository.find(criterio);
             if(categorias) return categorias;
             throw new NotFoundException(`No hay categorias registrados en la base de datos`);
@@ -32,7 +54,7 @@ export class CategoriaService {
                 error: `Error al intentar leer los categorias en la base de datos; ${error}`},
                 HttpStatus.NOT_FOUND);
         }
-    }
+    }*/
 
     async getCategoriaById(id:number): Promise <Categoria>{
         try {
