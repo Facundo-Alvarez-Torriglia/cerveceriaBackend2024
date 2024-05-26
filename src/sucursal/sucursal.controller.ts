@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Request, Param, Delete, HttpCode, HttpException, HttpStatus, ParseIntPipe, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Request, Param, Delete, HttpCode, HttpException, HttpStatus, ParseIntPipe, Put, UseGuards, Patch } from '@nestjs/common';
 import { SucursalService } from './sucursal.service';
 import { SucursalDto } from './dto/create-sucursal.dto';
 import { UpdateSucursalDto } from './dto/update-sucursal.dto';
@@ -59,4 +59,12 @@ export class SucursalController {
      )) id: number):Promise<Boolean> {
        return this.sucursalService.softDelete(id)
   }
+
+  @Patch(':id')
+    @UseGuards(AdminGuard)
+    async activarSucursalDeleted(@Param('id', new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+    })) id: number): Promise<Boolean> {
+        return await this.sucursalService.softReactivarSucursalDeleted(id);
+    }
 }
