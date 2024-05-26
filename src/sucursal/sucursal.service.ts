@@ -124,7 +124,7 @@ async  findOneSucursalActiva(id: number):Promise<Sucursal> {
     }
     // Si el producto esta borrado, lanzamos una excepcion
     if (sucursalExists.deleted) {
-      throw new ConflictException('El usuario esta ya borrado');
+      throw new ConflictException('La sucursale ya esta ya borrada');
     }
     // Actualizamos la propiedad deleted
     const rows: UpdateResult = await this.sucursalRepository.update(
@@ -134,4 +134,21 @@ async  findOneSucursalActiva(id: number):Promise<Sucursal> {
     // Si afecta a un registro, devolvemos true
     return rows.affected == 1;
   }
+
+
+  async softReactivarSucursalDeleted(id:number): Promise <Boolean> {
+    // Busco el producto
+    const sucursalExists: Sucursal = await this.findOne(id);
+    // Si el producto esta borrado, lanzamos una excepcion
+    if(!sucursalExists.deleted){
+        throw new ConflictException('La categoría ya fue activado con anterioridad');
+    }
+    // Actualizamos la propiedad deleted
+const rows: UpdateResult = await this.sucursalRepository.update(
+    { id:id },
+    { deleted: false }
+);
+// Si afecta a un registro, devolvemos true
+return rows.affected == 1;
+}
 }
