@@ -3,10 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository, UpdateResult } from 'typeorm';
 import { Reserva } from './entities/Reserva.entity';
 import { ReservaDto } from './dto/create-reserva.dto';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { MetodoPago } from 'src/metodoPago/entities/MetodoPago.entity';
 
 @Injectable()
 export class ReservaService {
-    constructor(@InjectRepository(Reserva) private readonly reservaRepository: Repository<Reserva>) { }
+    constructor(
+        @InjectRepository(Reserva) private readonly reservaRepository: Repository<Reserva>,
+        @InjectRepository(Usuario) private readonly usuarioRepository: Repository<Usuario>,
+        @InjectRepository(MetodoPago) private readonly metodoPagoRepository: Repository<MetodoPago>,
+      ) {}
 
     async getReservas(): Promise<Reserva[]> {
         try {
@@ -42,7 +48,7 @@ export class ReservaService {
     }
 
     private async comprobacionReserva(datos: ReservaDto): Promise<void> {
-        if (!datos.fecha || !datos.hora || !datos.cantidad || !datos.numeroMesa) {
+        if (!datos.fecha || !datos.hora || !datos.cantidad || !datos.numeroMesa || !datos.idUsuario || !datos.idMetodoPago) {
             throw new BadRequestException(`No puede tener campos vacíos`);
         }
     }
@@ -50,16 +56,31 @@ export class ReservaService {
     async crearReserva(datos: ReservaDto): Promise<Reserva> {
         try {
             await this.comprobacionReserva(datos);
-            const nuevaReserva: Reserva = await this.reservaRepository.save(new Reserva(
-                datos.fecha, datos.hora, datos.cantidad, datos.numeroMesa));
-            if (nuevaReserva) return nuevaReserva;
-            throw new NotFoundException(`No se pudo crear la reserva para el usuario ${datos.idUsuario.name}`);
+
+            const usuario = await this.usuarioRepository.findOne({ where: { id: datos.idUsuario } });
+            const metodoPago = await this.metodoPagoRepository.findOne({ where: { id: datos.idMetodoPago } });
+
+            if (!usuario) {
+                throw new NotFoundException(`Usuario no encontrado`);
+            }
+
+            if (!metodoPago) {
+                throw new NotFoundException(`Método de pago no encontrado`);
+            }
+
+            const nuevaReserva = new Reserva(datos.fecha, datos.hora, datos.cantidad, datos.numeroMesa);
+            nuevaReserva.usuario = usuario;
+            nuevaReserva.metodoPago = metodoPago;
+
+            const reservaGuardada = await this.reservaRepository.save(nuevaReserva);
+
+            if (reservaGuardada) return reservaGuardada;
+            throw new NotFoundException(`No se pudo crear la reserva para el usuario ${datos.idUsuario}`);
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.NOT_FOUND,
-                error: `Error al intentar crear la reserva para el usuario ${datos.idUsuario.name} en la base de datos; ${error}`
-            },
-                HttpStatus.NOT_FOUND);
+                error: `Error al intentar crear la reserva para el usuario ${datos.idUsuario} en la base de datos; ${error}`,
+            }, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -78,25 +99,26 @@ export class ReservaService {
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.NOT_FOUND,
-                error: `Error al intentar actualizar la reserva con ${id} a nombre de ${datos.idUsuario.age + datos.idUsuario.lastname} en la base de datos; ${error}`
+                error: `Error al intentar actualizar la reserva con id ${id} a nombre del usuario con id ${datos.idUsuario} en la base de datos; ${error}`
+
             },
                 HttpStatus.NOT_FOUND);
         }
     }
 
     async SoftEliminarReserva(id: number): Promise<Boolean> {
-        //Busca la serva
+        
         const reservaExist: Reserva = await this.getReservaById(id);
-        // Si el producto esta borrado, lanzamos una excepcion
+        
         if (reservaExist.deleted) {
             throw new ConflictException('La reserva ya fue borrada con anterioridad');
         }
-        //Actualizamos la propiedad deleted
+        
         const rows: UpdateResult = await this.reservaRepository.update(
             { id: id },
             { deleted: true }
         );
-        //Si afecta a un registro, devolvemos true
+        
         return rows.affected == 1;
     }
 }

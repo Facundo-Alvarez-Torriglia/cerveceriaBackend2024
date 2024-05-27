@@ -4,23 +4,21 @@ import { Usuario } from "src/usuario/entities/usuario.entity";
 
 
 export class ReservaDto {
+    @IsString()
+    fecha: string;
 
     @IsString()
-    fecha:string;
-
-    @IsString()
-    hora:string;
+    hora: string;
 
     @IsNumber()
-    cantidad:number;
+    cantidad: number;
 
     @IsNumber()
-    numeroMesa:number; 
+    numeroMesa: number; 
 
-    idUsuario:Usuario;
+    @IsNumber()
+    idUsuario: number;
 
-    idMetodoPago:MetodoPago;
-
-    usuario:Usuario;
-
+    @IsNumber()
+    idMetodoPago: number;
 }
