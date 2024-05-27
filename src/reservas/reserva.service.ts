@@ -107,18 +107,18 @@ export class ReservaService {
     }
 
     async SoftEliminarReserva(id: number): Promise<Boolean> {
-        //Busca la serva
+        
         const reservaExist: Reserva = await this.getReservaById(id);
-        // Si el producto esta borrado, lanzamos una excepcion
+        
         if (reservaExist.deleted) {
             throw new ConflictException('La reserva ya fue borrada con anterioridad');
         }
-        //Actualizamos la propiedad deleted
+        
         const rows: UpdateResult = await this.reservaRepository.update(
             { id: id },
             { deleted: true }
         );
-        //Si afecta a un registro, devolvemos true
+        
         return rows.affected == 1;
     }
 }
