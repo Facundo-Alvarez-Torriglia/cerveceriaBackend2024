@@ -90,9 +90,22 @@ export class ProductoService {
             if (nuevoProducto) return nuevoProducto;            
             throw new NotFoundException(`No se pudo crear el producto con nombre ${datos.titulo}`);
         } catch (error) {
-            throw new HttpException({ status: HttpStatus.NOT_FOUND,
-                error: `Error al intentar crear el producto de nombre ${datos.titulo} en la base de datos; ${error}`},
-                HttpStatus.NOT_FOUND);
+            if (error instanceof HttpException) {
+                // Si el error es de tipo HttpException, simplemente relanzamos el error
+                throw error;
+            } else if (error instanceof ConflictException) {
+                // Si el error es de tipo ConflictException, lanzamos una excepción HTTP con el mismo mensaje
+                throw new HttpException({
+                    status: HttpStatus.CONFLICT,
+                    error: error.message,
+                }, HttpStatus.CONFLICT);
+            } else {
+                // En caso de cualquier otro error, lanzamos una excepción HTTP genérica
+                throw new HttpException({
+                    status: HttpStatus.INTERNAL_SERVER_ERROR,
+                    error: `Error al intentar crear el producto de nombre ${datos.titulo} en la base de datos; ${error}`,
+                }, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
     }
 
