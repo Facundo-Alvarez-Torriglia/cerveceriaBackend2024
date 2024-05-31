@@ -14,6 +14,7 @@ export class MetodoPagoController {
   async findAll(): Promise<MetodoPagoDto[]> {
     const metodoPagos: MetodoPago[] = await this.metodoPagoService.findAll();
     return metodoPagos.map(metodoPago => ({
+      idMetodoPago: metodoPago.id, 
       metodoPago: metodoPago.metodoPago,
       usuario: metodoPago.usuario
     }));

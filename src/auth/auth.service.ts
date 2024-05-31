@@ -16,7 +16,7 @@ export class AuthService {
             throw new UnauthorizedException();
         }
              //sino, si los datos son correctos abtiene el id, el email y el rol 
-           const payload = { sub: user.id, username: user.username, role: user.role };
+           const payload = { sub: user.id, username: user.username, email:user.email, role: user.role };
            //retorna un token de seguridad creado exclusivamente para ese usuario logueado
         return {
             access_token: await this.jwtService.signAsync(payload),
