@@ -12,7 +12,9 @@ export class PedidoService {
 
     async getPedidos(): Promise<Pedido[]> {
         try {
-            const criterio:FindManyOptions = {relations: ['usuario', 'pedidosProducto', 'metodoPago', 'pedidosProducto.producto']}
+            const criterio:FindManyOptions = {
+                relations: ['usuario', 'pedidosProducto', 'metodoPago', 'pedidosProducto.producto'],
+                order: { id : 'DESC' }}
             const pedidos: Pedido[] = await this.pedidoRepository.find(criterio);
             if (pedidos.length > 0) return pedidos;
             throw new NotFoundException(`No hay pedidos registrados en la base de datos`);
