@@ -16,7 +16,6 @@ export class PedidoController {
     @HttpCode(200)
     async getPedidos(@Request() req: Request & {user:RequestLoginDto}): Promise<Pedido[]> {
         const usuario: RequestLoginDto=req.user;
-        console.log(usuario.role);
         if (usuario.role=='admin') {
             return await this.pedidoService.getPedidos();
         }

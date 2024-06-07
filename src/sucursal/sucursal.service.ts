@@ -75,8 +75,7 @@ export class SucursalService {
 async  findOneSucursalActiva(id: number):Promise<Sucursal> {
     try {
       const criterio: FindOneOptions = {
-        relations: ['pedidos', 'reservas'],
-        where: { id: id, where: { deleted: false } }
+        where: { id: id, deleted: false }
       }
       const sucursal: Sucursal = await this.sucursalRepository.findOne(criterio);
       if (sucursal) return sucursal;

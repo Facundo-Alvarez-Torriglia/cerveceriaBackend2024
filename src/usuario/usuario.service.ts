@@ -102,11 +102,18 @@ export class UsuarioService {
   async findOne(id: number): Promise<Usuario> {
     try {
       //busca según los 2 criterios ingresados, relaciones y coincidencia por id
-      let criterio: FindOneOptions = { relations: ['pedidos', 'reservas', 'pedidos.pedidosProducto.producto'], where: { id: id } };
+      let criterio: FindOneOptions = { 
+        relations: ['pedidos', 'reservas', 'pedidos.pedidosProducto.producto'], 
+        where: { id: id },
+        order: {
+          pedidos: {
+            id: 'DESC' // Cambia 'fecha' por la columna que quieras usar para ordenar
+          }
+        } 
+      };
       //si existe coincidencia lo guarda en la const user y lo retorna
       const user = await this.usuarioRepository.findOne(criterio);
       if (user) {
-        console.log("Estoy aqui");
 
         return user
       } else {
