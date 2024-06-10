@@ -3,7 +3,7 @@ import { ReservaDto } from './dto/create-reserva.dto';
 import { ReservaService } from './reserva.service';
 import { Reserva } from './entities/Reserva.entity';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
-import { RequestLoginDto } from 'src/pedido/dto/request-login-dto.dto';
+import { AdminGuard } from 'src/auth/guard/admin.guard';
 
 @Controller('reserva')
 export class ReservaController {
@@ -41,13 +41,10 @@ export class ReservaController {
     }
 
     @Delete(':id')
-    @UseGuards(AuthGuard)
-    async softEliminarReserva(@Request() req: Request & { user: RequestLoginDto }, @Param('id', new ParseIntPipe({
+    @UseGuards(AdminGuard)
+    async SoftEliminarReserva(@Param('id', new ParseIntPipe({
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
-    })) id: number, @Body() datos: ReservaDto): Promise<Boolean> {
-        const usuarioAutenticado = req.user;
-        if (datos.idUsuario === usuarioAutenticado.sub) {
-            return await this.reservaService.SoftEliminarReserva(id);
-        }
+    })) id: number): Promise<Boolean> {
+        return await this.reservaService.SoftEliminarReserva(id);
     }
 }

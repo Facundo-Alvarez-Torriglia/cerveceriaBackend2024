@@ -33,7 +33,7 @@ export class ReservaService {
         try {
             const criterio: FindOneOptions = {
                 relations: ['usuario', 'metodoPago'],
-                where: { idReserva: id }
+                where: { id: id }
             }
             const reserva: Reserva = await this.reservaRepository.findOne(criterio);
             if (reserva) return reserva;
