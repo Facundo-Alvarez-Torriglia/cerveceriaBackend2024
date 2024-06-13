@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository, UpdateResult } from 'typeorm';
 import { Reserva } from './entities/Reserva.entity';
 import { ReservaDto } from './dto/create-reserva.dto';
-import { ReservaResponseDto } from './dto/reserva-response.dto';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { MetodoPago } from 'src/metodoPago/entities/MetodoPago.entity';
 
