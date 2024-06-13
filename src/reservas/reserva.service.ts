@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository, UpdateResult } from 'typeorm';
 import { Reserva } from './entities/Reserva.entity';
 import { ReservaDto } from './dto/create-reserva.dto';
+import { ReservaResponseDto } from './dto/reserva-response.dto';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { MetodoPago } from 'src/metodoPago/entities/MetodoPago.entity';
 
@@ -42,8 +43,7 @@ export class ReservaService {
             throw new HttpException({
                 status: HttpStatus.NOT_FOUND,
                 error: `Error al intentar leer la reserva con id ${id} en la base de datos; ${error}`
-            },
-                HttpStatus.NOT_FOUND);
+            }, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -93,6 +93,7 @@ export class ReservaService {
                 reservaActualizar.hora = datos.hora;
                 reservaActualizar.cantidad = datos.cantidad;
                 reservaActualizar.numeroMesa = datos.numeroMesa;
+                reservaActualizar.usuario = await this.usuarioRepository.findOne({ where: { id: datos.idUsuario } });
                 reservaActualizar = await this.reservaRepository.save(reservaActualizar);
                 return reservaActualizar;
             }
