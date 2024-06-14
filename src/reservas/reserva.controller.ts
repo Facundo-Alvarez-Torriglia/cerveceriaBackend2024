@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, Request, Patch } from '@nestjs/common';
 import { ReservaDto } from './dto/create-reserva.dto';
 import { ReservaService } from './reserva.service';
 import { Reserva } from './entities/Reserva.entity';
@@ -46,5 +46,13 @@ export class ReservaController {
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Boolean> {
         return await this.reservaService.SoftEliminarReserva(id);
+    }
+
+    @Patch(':id')
+    @UseGuards(AdminGuard)
+    async reactivarReserva(@Param('id', new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
+    })) id: number): Promise<Boolean> {
+        return await this.reservaService.softReactivarReserva(id);
     }
 }

@@ -121,6 +121,22 @@ export class ReservaService {
         
         return rows.affected == 1;
     }
+
+    async softReactivarReserva(id:number): Promise <Boolean> {
+        // Busco el reserva
+        const reservaExists: Reserva = await this.getReservaById(id);
+        // Si el reserva esta borrado, lanzamos una excepcion
+        if(!reservaExists.deleted){
+            throw new ConflictException('La reserva ya fue activado con anterioridad');
+        }
+        // Actualizamos la propiedad deleted
+    const rows: UpdateResult = await this.reservaRepository.update(
+        { id:id },
+        { deleted: false }
+    );
+    // Si afecta a un registro, devolvemos true
+    return rows.affected == 1;
+}
 }
 
 
