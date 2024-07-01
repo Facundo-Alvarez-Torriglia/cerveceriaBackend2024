@@ -1,4 +1,5 @@
 import { Module, Res } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FastifyLoader, ServeStaticModule } from '@nestjs/serve-static';
@@ -23,22 +24,30 @@ import { Pedido } from './pedido/entity/pedido.entity';
 import { PedidoModule } from './pedido/pedido.module';
 import { PedidoProducto } from './pedido-producto/entity/pedido-producto';
 import { PedidoProductoModule } from './pedido-producto/pedido-producto.module';
+import { EmailModule } from './email/email.module';
 
 
 @Module({
   imports: [
-/*     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'app') }),
- */    TypeOrmModule.forRoot({
-    type: 'cockroachdb',
-    host: 'rushed-tenrec-14585.7tt.aws-us-east-1.cockroachlabs.cloud',
-    port: 26257,
-    username: 'greenbeer',
-    password: '19hweL863M9TnJ5Ul2zNVw',
-    database: 'cerveceria',
-    ssl: true,
-    entities: [Sucursal,Usuario,Tipo,Reserva,Producto,MetodoPago,Categoria, Pedido, PedidoProducto], //__dirname + "/entity/*{.js,.ts}"
-    synchronize: false,
-  }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'cockroachdb',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+        ssl: true,
+        entities: [Sucursal, Usuario, Tipo, Reserva, Producto, MetodoPago, Categoria, Pedido, PedidoProducto],
+        synchronize: false,
+      }),
+      inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'app') }),
     CategoriaModule,
     ProductoModule,
     SucursalModule,
@@ -48,7 +57,8 @@ import { PedidoProductoModule } from './pedido-producto/pedido-producto.module';
     MetodoPagoModule,
     AuthModule, 
     PedidoModule,
-    PedidoProductoModule
+    PedidoProductoModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
