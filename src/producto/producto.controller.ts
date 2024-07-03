@@ -44,13 +44,6 @@ export class ProductoController {
     @UseGuards(AdminGuard)
     async crearProducto(@Request() req:Request & {user:RequestLoginDto},@Body() datos: DtoProducto): Promise<Producto> {
         return await this.productoService.crearProducto(datos);
-        /*const usuarioAutenticado = req.user;
-        console.log(req);
-        if (datos.usuario === usuarioAutenticado.sub) {
-            
-           
-        }
-        throw new ConflictException(`El usuario ${datos.usuario} es distinto al usuario logueado ${usuarioAutenticado.sub}.`)*/
     }
 
     @Patch(':id')

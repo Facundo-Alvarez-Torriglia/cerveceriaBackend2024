@@ -31,7 +31,6 @@ export class PedidoController {
         errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE
     })) id: number): Promise<Pedido> {
         const usuario: RequestLoginDto=req.user;
-        console.log(usuario.role);
         if (usuario.role=='admin') {
             return await this.pedidoService.getPedidoById(id);
         }
