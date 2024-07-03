@@ -36,7 +36,6 @@ export class PedidoProductoController {
     @UseGuards(AuthGuard)
     async createPedidoProducto(@Request() req: Request & {user:RequestLoginDto},@Body() pedidoDto: pedidoProductoDto): Promise<PedidoProducto> {
         const usuarioLog = req.user;
-        console.log(req.user.sub);
         if (usuarioLog.role=== 'admin') {
             return await this.pedidoProductoService.createPedidoProducto(pedidoDto);  
         } else {
