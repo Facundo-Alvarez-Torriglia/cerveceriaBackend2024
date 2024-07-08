@@ -8,7 +8,7 @@ app.enableCors({
   origin: '*' // Esto permite solicitudes desde cualquier origen
 });
 //app.useGlobalPipes(new ValidationPipe({whitelist:true, /*forbidNonWhitelisted:true*/}))
-await app.listen(3000);
+await app.listen(https://cerveceriabackend2024.onrender.com);
 }
 bootstrap();
 
