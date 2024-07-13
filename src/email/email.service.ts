@@ -16,9 +16,9 @@ export class EmailService {
     });
   }
 
-  async sendEmail(to: string, subject: string, text: string): Promise<void> {
+  async sendEmail(to: string, subject: string, text: string, from: string = 'greenbeercerveceria@gmail.com'): Promise<void> {
     const mailOptions = {
-      from: this.configService.get<string>('EMAIL'),
+      from,
       to,
       subject,
       text,
